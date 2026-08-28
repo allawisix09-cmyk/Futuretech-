@@ -55,6 +55,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [adminUsername, setAdminUsername] = useState('kabandaaiman');
   const [adminPassword, setAdminPassword] = useState('');
 
+  // Password Reset fields
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetIdentifier, setResetIdentifier] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+
   // UI state
   const [showPassword, setShowPassword] = useState(false);
   const [showAdminPassword, setShowAdminPassword] = useState(false);
@@ -63,6 +69,77 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [referrerInfo, setReferrerInfo] = useState<{ username: string; code: string } | null>(null);
   const [showTermsModal, setShowTermsModal] = useState(false);
+
+  // 1-Click Instant Demo Logins
+  const handleQuickDemoInvestor = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await api.login({
+        identifier: 'futurettech01@gmail.com',
+        password: 'FutureTech@2026'
+      });
+      setSuccessMsg('Signed in as Verified Investor (futurettech01@gmail.com)');
+      setTimeout(() => {
+        onAuthSuccess(res.user, res.inviteStats);
+        onClose();
+      }, 700);
+    } catch (err: any) {
+      setError(err.message || 'Demo login failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleQuickDemoAdmin = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await api.adminLogin('0000000000', 'kabandaaiman');
+      setSuccessMsg('Admin credentials authorized for @kabandaaiman');
+      setTimeout(() => {
+        onAuthSuccess(res.user, res.inviteStats);
+        onClose();
+      }, 700);
+    } catch (err: any) {
+      setError(err.message || 'Admin login failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    if (!resetIdentifier || !newPassword) {
+      setError('Please provide your email/phone and a new password.');
+      return;
+    }
+    if (newPassword.length < 6) {
+      setError('Password must be at least 6 characters.');
+      return;
+    }
+    if (newPassword !== confirmNewPassword) {
+      setError('New passwords do not match.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await api.resetPassword(resetIdentifier, newPassword);
+      setSuccessMsg(res.message || 'Password reset successfully! You can now log in.');
+      setLoginIdentifier(resetIdentifier);
+      setLoginPassword(newPassword);
+      setShowForgotPassword(false);
+      setResetIdentifier('');
+      setNewPassword('');
+      setConfirmNewPassword('');
+    } catch (err: any) {
+      setError(err.message || 'Failed to reset password.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     setMode(initialMode);
@@ -235,13 +312,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         </div>
 
         {/* 3-Slot Tab Switcher */}
-        <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-[#050a14] border border-cyan-900/40 mb-6 text-center">
+        <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-[#050a14] border border-cyan-900/40 mb-4 text-center">
           <button
             id="auth-tab-register"
             type="button"
             onClick={() => {
               setMode('register');
               setError(null);
+              setShowForgotPassword(false);
             }}
             className={`py-2 text-[11px] font-orbitron font-bold rounded-lg transition ${
               mode === 'register'
@@ -258,6 +336,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             onClick={() => {
               setMode('login');
               setError(null);
+              setShowForgotPassword(false);
             }}
             className={`py-2 text-[11px] font-orbitron font-bold rounded-lg transition ${
               mode === 'login'
@@ -274,6 +353,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             onClick={() => {
               setMode('admin');
               setError(null);
+              setShowForgotPassword(false);
             }}
             className={`py-2 text-[11px] font-orbitron font-bold rounded-lg transition flex items-center justify-center gap-1 ${
               mode === 'admin'
@@ -284,6 +364,44 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             <ShieldAlert className="w-3 h-3" />
             <span>Admin</span>
           </button>
+        </div>
+
+        {/* Fast 1-Click Demo Portals */}
+        <div className="mb-5 p-3 rounded-2xl bg-cyan-950/40 border border-cyan-500/30 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-mono text-cyan-300 font-bold uppercase flex items-center gap-1">
+              <Sparkles className="w-3 h-3 text-amber-400" />
+              <span>Instant 1-Click Demo Logins</span>
+            </span>
+            <span className="text-[9px] font-mono text-slate-400">1 tap to enter</span>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={handleQuickDemoInvestor}
+              disabled={loading}
+              className="px-2.5 py-2 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/30 border border-cyan-400/50 text-cyan-200 text-[10px] font-mono text-left transition flex items-center gap-2"
+            >
+              <UserIcon className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+              <div className="truncate">
+                <span className="font-bold block text-white">Demo Investor</span>
+                <span className="text-[9px] text-cyan-300/80 truncate block">futurettech01@...</span>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleQuickDemoAdmin}
+              disabled={loading}
+              className="px-2.5 py-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/30 border border-amber-400/50 text-amber-200 text-[10px] font-mono text-left transition flex items-center gap-2"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+              <div className="truncate">
+                <span className="font-bold block text-amber-300">Admin Control</span>
+                <span className="text-[9px] text-amber-400/80 truncate block">@kabandaaiman</span>
+              </div>
+            </button>
+          </div>
         </div>
 
         {/* Referral Detected Banner */}
@@ -467,11 +585,92 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           </form>
         )}
 
-        {/* USER LOGIN FORM */}
-        {mode === 'login' && (
-          <form onSubmit={handleUserLogin} className="space-y-4">
+        {/* USER LOGIN FORM / PASSWORD RESET */}
+        {mode === 'login' && showForgotPassword ? (
+          <form onSubmit={handleResetPassword} className="space-y-4">
+            <div className="p-3 rounded-2xl bg-cyan-950/50 border border-cyan-500/40 text-xs font-mono text-cyan-200">
+              <strong className="block text-white font-orbitron mb-1">Reset Account Password</strong>
+              <span>Enter your registered email or phone to configure a new security password.</span>
+            </div>
+
             <div>
               <label className="block text-xs font-mono text-slate-300 mb-1">Phone Number or Email</label>
+              <div className="relative">
+                <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+                <input
+                  type="text"
+                  required
+                  placeholder="+256772123456 or futurettech01@gmail.com"
+                  value={resetIdentifier}
+                  onChange={e => setResetIdentifier(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#050a14] border border-slate-700 focus:border-cyan-400 text-white text-xs font-mono focus:outline-none transition"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-mono text-slate-300 mb-1">New Password (min 6 chars)</label>
+              <div className="relative">
+                <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+                <input
+                  type="password"
+                  required
+                  placeholder="New password"
+                  value={newPassword}
+                  onChange={e => setNewPassword(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#050a14] border border-slate-700 focus:border-cyan-400 text-white text-xs font-mono focus:outline-none transition"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-mono text-slate-300 mb-1">Confirm New Password</label>
+              <div className="relative">
+                <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+                <input
+                  type="password"
+                  required
+                  placeholder="Confirm new password"
+                  value={confirmNewPassword}
+                  onChange={e => setConfirmNewPassword(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#050a14] border border-slate-700 focus:border-cyan-400 text-white text-xs font-mono focus:outline-none transition"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setShowForgotPassword(false)}
+                className="w-1/3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono text-xs transition"
+              >
+                Back
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-2/3 py-2.5 rounded-xl font-orbitron font-bold text-xs uppercase text-black bg-cyan-400 hover:bg-cyan-300 transition shadow-[0_0_15px_rgba(0,210,255,0.3)] disabled:opacity-50"
+              >
+                {loading ? 'Resetting...' : 'Save New Password'}
+              </button>
+            </div>
+          </form>
+        ) : mode === 'login' ? (
+          <form onSubmit={handleUserLogin} className="space-y-4">
+            <div>
+              <div className="flex items-center justify-between text-xs font-mono text-slate-300 mb-1">
+                <span>Phone Number or Email</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLoginIdentifier('futurettech01@gmail.com');
+                    setLoginPassword('FutureTech@2026');
+                  }}
+                  className="text-[10px] text-cyan-400 hover:text-cyan-300 underline"
+                >
+                  Quick-fill Demo Investor
+                </button>
+              </div>
               <div className="relative">
                 <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
                 <input
@@ -491,7 +690,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 <span>Password</span>
                 <button
                   type="button"
-                  onClick={() => alert('Password reset instructions dispatched to your registered email or phone.')}
+                  onClick={() => {
+                    setShowForgotPassword(true);
+                    setResetIdentifier(loginIdentifier);
+                    setError(null);
+                  }}
                   className="text-[10px] text-cyan-400 hover:text-cyan-300"
                 >
                   Forgot password?
@@ -555,7 +758,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               )}
             </button>
           </form>
-        )}
+        ) : null}
 
         {/* ADMIN LOGIN SLOT */}
         {mode === 'admin' && (

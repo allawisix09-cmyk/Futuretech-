@@ -50,45 +50,69 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
   const [showQrModal, setShowQrModal] = useState(false);
+  const [shareNotice, setShareNotice] = useState<string | null>(null);
 
   const activeRentals = myRentals.filter(r => r.status === 'active');
   const totalHashRate = activeRentals.reduce((sum, r) => sum + r.hashRate, 0);
   const totalUnclaimed = activeRentals.reduce((sum, r) => sum + r.unclaimedEarningsUGX, 0);
 
   const copyToClipboard = (text: string, type: 'link' | 'code') => {
-    navigator.clipboard.writeText(text);
-    if (type === 'link') {
-      setCopiedLink(true);
-      setTimeout(() => setCopiedLink(false), 2000);
-    } else {
-      setCopiedCode(true);
-      setTimeout(() => setCopiedCode(false), 2000);
+    try {
+      navigator.clipboard.writeText(text);
+      if (type === 'link') {
+        setCopiedLink(true);
+        setTimeout(() => setCopiedLink(false), 2000);
+      } else {
+        setCopiedCode(true);
+        setTimeout(() => setCopiedCode(false), 2000);
+      }
+      setShareNotice(type === 'link' ? 'Special referral link copied to clipboard!' : 'Referral code copied to clipboard!');
+      setTimeout(() => setShareNotice(null), 3000);
+    } catch (e) {
+      console.warn('Clipboard copy failed:', e);
+    }
+  };
+
+  const triggerShare = (channel: string, shareUrl: string, text: string) => {
+    try {
+      navigator.clipboard.writeText(`${text}\n${shareUrl}`);
+    } catch (e) {}
+    setShareNotice(`Invitation copied to clipboard! (Opening ${channel}...)`);
+    setTimeout(() => setShareNotice(null), 3500);
+    try {
+      window.open(shareUrl, '_blank');
+    } catch (err) {
+      console.warn('Popup blocked:', err);
     }
   };
 
   const shareViaWhatsApp = () => {
-    const text = encodeURIComponent(
-      `🚀 Join FUTURE TECH and earn daily profits by renting quantum computing power!\n\nUse my personal link to get a UGX 10,000 welcome credit:\n${user.referralLink}`
-    );
-    window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    const text = `🚀 Join FUTURE TECH and earn daily profits by renting quantum computing power!\n\nUse my personal link to get a UGX 10,000 welcome credit:\n${user.referralLink}`;
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+    triggerShare('WhatsApp', url, text);
   };
 
   const shareViaSMS = () => {
-    const text = encodeURIComponent(
-      `Join FUTURE TECH computing grid with my code ${user.referralCode} and start earning: ${user.referralLink}`
-    );
-    window.open(`sms:?body=${text}`, '_blank');
+    const text = `Join FUTURE TECH computing grid with my code ${user.referralCode} and start earning: ${user.referralLink}`;
+    const url = `sms:?body=${encodeURIComponent(text)}`;
+    triggerShare('SMS', url, text);
   };
 
   const shareViaTelegram = () => {
-    const text = encodeURIComponent(
-      `Power the Future. Earn from Technology with FUTURE TECH computing clusters! Link: ${user.referralLink}`
-    );
-    window.open(`https://t.me/share/url?url=${encodeURIComponent(user.referralLink)}&text=${text}`, '_blank');
+    const text = `Power the Future. Earn from Technology with FUTURE TECH computing clusters! Link: ${user.referralLink}`;
+    const url = `https://t.me/share/url?url=${encodeURIComponent(user.referralLink)}&text=${encodeURIComponent(text)}`;
+    triggerShare('Telegram', url, text);
   };
 
   return (
     <div id="dashboard-home" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8 text-white pb-24">
+
+      {shareNotice && (
+        <div className="p-3.5 rounded-2xl bg-cyan-950/80 border border-cyan-400/70 flex items-center gap-2 text-xs font-mono text-cyan-200 animate-pulse">
+          <Check className="w-4 h-4 text-cyan-400 shrink-0" />
+          <span>{shareNotice}</span>
+        </div>
+      )}
       
       {/* 1. Profile Welcome & Account Overview */}
       <div className="p-6 rounded-3xl bg-gradient-to-r from-[#09152e] via-[#0b1b3b] to-[#081226] border border-cyan-500/40 glow-border-cyan flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl">

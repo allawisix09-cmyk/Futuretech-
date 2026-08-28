@@ -21,50 +21,74 @@ import {
 import confetti from 'canvas-confetti';
 
 interface MyInvitesViewProps {
-  user: User;
+  user: User | null;
   inviteStats: InviteStats;
   referrals: ReferralRecord[];
+  onOpenAuth?: () => void;
+  onQuickDemoLogin?: () => void;
 }
 
 export const MyInvitesView: React.FC<MyInvitesViewProps> = ({
   user,
   inviteStats,
-  referrals
+  referrals,
+  onOpenAuth,
+  onQuickDemoLogin
 }) => {
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
   const [showQrModal, setShowQrModal] = useState(false);
+  const [shareNotice, setShareNotice] = useState<string | null>(null);
+
+  const effectiveReferralLink = user ? user.referralLink : 'https://futuretech.com/join/FT-8K29X4';
+  const effectiveReferralCode = user ? user.referralCode : 'FT-8K29X4';
 
   const copyToClipboard = (text: string, type: 'link' | 'code') => {
-    navigator.clipboard.writeText(text);
-    if (type === 'link') {
-      setCopiedLink(true);
-      setTimeout(() => setCopiedLink(false), 2000);
-    } else {
-      setCopiedCode(true);
-      setTimeout(() => setCopiedCode(false), 2000);
+    try {
+      navigator.clipboard.writeText(text);
+      if (type === 'link') {
+        setCopiedLink(true);
+        setTimeout(() => setCopiedLink(false), 2000);
+      } else {
+        setCopiedCode(true);
+        setTimeout(() => setCopiedCode(false), 2000);
+      }
+      setShareNotice(type === 'link' ? 'Special link copied to clipboard!' : 'Referral code copied to clipboard!');
+      setTimeout(() => setShareNotice(null), 3000);
+    } catch (e) {
+      console.warn('Clipboard write failed:', e);
+    }
+  };
+
+  const triggerShare = (channel: string, shareUrl: string, text: string) => {
+    try {
+      navigator.clipboard.writeText(`${text}\n${shareUrl}`);
+    } catch (e) {}
+    setShareNotice(`Link copied to clipboard! (Opening ${channel}...)`);
+    setTimeout(() => setShareNotice(null), 3500);
+    try {
+      window.open(shareUrl, '_blank');
+    } catch (err) {
+      console.warn('Popup blocked:', err);
     }
   };
 
   const shareViaWhatsApp = () => {
-    const text = encodeURIComponent(
-      `🚀 Join FUTURE TECH and earn daily computing yields!\n\nUse my special link to get started:\n${user.referralLink}`
-    );
-    window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    const text = `🚀 Join FUTURE TECH and earn daily computing yields!\n\nUse my special link to get started:\n${effectiveReferralLink}`;
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+    triggerShare('WhatsApp', url, text);
   };
 
   const shareViaSMS = () => {
-    const text = encodeURIComponent(
-      `Join FUTURE TECH computing grid with my code ${user.referralCode}: ${user.referralLink}`
-    );
-    window.open(`sms:?body=${text}`, '_blank');
+    const text = `Join FUTURE TECH computing grid with my code ${effectiveReferralCode}: ${effectiveReferralLink}`;
+    const url = `sms:?body=${encodeURIComponent(text)}`;
+    triggerShare('SMS', url, text);
   };
 
   const shareViaTelegram = () => {
-    const text = encodeURIComponent(
-      `Power the Future. Earn from Technology with FUTURE TECH! Special link: ${user.referralLink}`
-    );
-    window.open(`https://t.me/share/url?url=${encodeURIComponent(user.referralLink)}&text=${text}`, '_blank');
+    const text = `Power the Future. Earn from Technology with FUTURE TECH! Special link: ${effectiveReferralLink}`;
+    const url = `https://t.me/share/url?url=${encodeURIComponent(effectiveReferralLink)}&text=${encodeURIComponent(text)}`;
+    triggerShare('Telegram', url, text);
   };
 
   return (
@@ -124,11 +148,49 @@ export const MyInvitesView: React.FC<MyInvitesViewProps> = ({
         </div>
       </div>
 
+      {/* Guest Mode Banner */}
+      {!user && (
+        <div className="p-4 rounded-2xl bg-cyan-950/60 border border-cyan-500/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs font-mono text-cyan-200">
+          <div className="flex items-center gap-2.5">
+            <Sparkles className="w-5 h-5 text-amber-400 shrink-0" />
+            <div>
+              <strong className="text-white font-orbitron text-xs block">Exploring Special Referral Engine (Guest Mode)</strong>
+              <span className="text-cyan-300/80 text-[11px]">Every user gets a personalized referral code (e.g. FT-8K29X4). Earn 5% instant commissions on every machine leased by your invites.</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            {onQuickDemoLogin && (
+              <button
+                onClick={onQuickDemoLogin}
+                className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-orbitron font-bold text-xs uppercase transition shadow-[0_0_12px_rgba(0,210,255,0.4)]"
+              >
+                Launch Demo Investor
+              </button>
+            )}
+            {onOpenAuth && (
+              <button
+                onClick={onOpenAuth}
+                className="px-3 py-2 rounded-xl bg-[#09152b] border border-cyan-400/50 text-cyan-300 hover:text-white font-mono text-xs transition"
+              >
+                Register
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {shareNotice && (
+        <div className="p-3.5 rounded-2xl bg-cyan-950/80 border border-cyan-400/70 flex items-center gap-2 text-xs font-mono text-cyan-200 animate-pulse">
+          <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0" />
+          <span>{shareNotice}</span>
+        </div>
+      )}
+
       {/* Share Links Card */}
       <div className="p-6 sm:p-8 rounded-3xl bg-[#081226] border border-cyan-500/40 space-y-6">
         <h3 className="font-orbitron font-bold text-base sm:text-lg text-white flex items-center gap-2">
           <Share2 className="w-5 h-5 text-cyan-400" />
-          <span>Your Special Link & Sharing Tools</span>
+          <span>{user ? 'Your Special Link & Sharing Tools' : 'Demo Special Link & Sharing Tools'}</span>
         </h3>
 
         {/* Special URL Bar */}
@@ -136,10 +198,10 @@ export const MyInvitesView: React.FC<MyInvitesViewProps> = ({
           <label className="block text-xs font-mono text-slate-300 mb-1.5">Special Referral Link (Auto-detection enabled)</label>
           <div className="flex items-center gap-2">
             <div className="flex-1 p-3.5 rounded-2xl bg-[#040813] border border-cyan-500/40 font-mono text-xs text-cyan-300 truncate font-semibold select-all">
-              {user.referralLink}
+              {effectiveReferralLink}
             </div>
             <button
-              onClick={() => copyToClipboard(user.referralLink, 'link')}
+              onClick={() => copyToClipboard(effectiveReferralLink, 'link')}
               className="px-5 py-3.5 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-black font-orbitron font-bold text-xs uppercase flex items-center gap-1.5 transition shadow-[0_0_15px_rgba(0,210,255,0.3)] shrink-0"
             >
               {copiedLink ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
@@ -153,10 +215,10 @@ export const MyInvitesView: React.FC<MyInvitesViewProps> = ({
           <label className="block text-xs font-mono text-slate-300 mb-1.5">Referral Code</label>
           <div className="flex items-center gap-2">
             <div className="w-48 p-3 rounded-2xl bg-[#040813] border border-slate-700 font-mono text-sm text-white font-bold text-center uppercase tracking-wider">
-              {user.referralCode}
+              {effectiveReferralCode}
             </div>
             <button
-              onClick={() => copyToClipboard(user.referralCode, 'code')}
+              onClick={() => copyToClipboard(effectiveReferralCode, 'code')}
               className="px-4 py-3 rounded-2xl bg-[#0d1c38] hover:bg-[#132850] text-cyan-300 border border-cyan-500/40 font-mono text-xs transition"
             >
               {copiedCode ? 'Copied!' : 'Copy Code'}

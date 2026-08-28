@@ -118,6 +118,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   // Machine Modal state (Add / Edit)
   const [showMachineModal, setShowMachineModal] = useState(false);
   const [editingMachine, setEditingMachine] = useState<Machine | null>(null);
+  const [machineToDelete, setMachineToDelete] = useState<{ id: string; name: string } | null>(null);
   const [machineForm, setMachineForm] = useState<Partial<Machine>>({
     tier: 'normal',
     name: '',
@@ -315,13 +316,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     }
   };
 
-  const handleDeleteMachine = async (id: string, name: string) => {
-    if (!window.confirm(`Are you sure you want to remove "${name}" from the active catalog?`)) {
-      return;
-    }
+  const handleDeleteMachine = (id: string, name: string) => {
+    setMachineToDelete({ id, name });
+  };
+
+  const handleConfirmDeleteMachine = async () => {
+    if (!machineToDelete) return;
     try {
-      await api.deleteMachine(id);
-      setFeedback(`Machine "${name}" removed from catalog.`);
+      await api.deleteMachine(machineToDelete.id);
+      setFeedback(`Machine "${machineToDelete.name}" removed from catalog.`);
+      setMachineToDelete(null);
       loadData();
     } catch (err: any) {
       setFeedback(err.message || 'Failed to delete machine');
@@ -1898,6 +1902,44 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-orbitron font-bold text-xs uppercase transition disabled:opacity-50"
               >
                 {actionLoading ? 'Rejecting...' : 'Confirm Rejection'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Machine Deletion Confirmation Modal */}
+      {machineToDelete && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#09152e] border border-rose-500/50 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-2xl bg-rose-950/80 border border-rose-500/50 text-rose-400">
+                <Trash2 className="w-6 h-6" />
+              </div>
+              <div>
+                <h4 className="font-orbitron font-bold text-white text-base">Remove Machine?</h4>
+                <p className="text-xs text-slate-400 font-mono">This will remove it from the active hardware catalog.</p>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-[#040813] border border-slate-800 text-xs font-mono text-slate-300">
+              Machine: <strong className="text-white">{machineToDelete.name}</strong>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setMachineToDelete(null)}
+                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono text-xs transition"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDeleteMachine}
+                className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-orbitron font-bold text-xs uppercase transition shadow-[0_0_15px_rgba(244,63,94,0.3)]"
+              >
+                Confirm Removal
               </button>
             </div>
           </div>
