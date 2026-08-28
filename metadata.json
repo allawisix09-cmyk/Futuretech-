@@ -1,0 +1,6 @@
+{
+  "name": "FUTURE TECH",
+  "description": "Next-generation computing machine rental and earnings platform with live referral rewards and secure payments.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  
+  h1, h2, h3, .font-orbitron {
+    font-family: 'Orbitron', 'Plus Jakarta Sans', sans-serif;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* Futuristic Neon Glows & Electric Borders */
+.glow-border-blue {
+  border: 1px solid rgba(0, 180, 255, 0.45);
+  box-shadow: 0 0 15px rgba(0, 150, 255, 0.18), inset 0 0 12px rgba(0, 150, 255, 0.08);
+}
+
+.glow-border-cyan {
+  border: 1px solid rgba(6, 214, 255, 0.5);
+  box-shadow: 0 0 20px rgba(6, 214, 255, 0.22), inset 0 0 15px rgba(6, 214, 255, 0.08);
+}
+
+.glow-border-gold {
+  border: 1px solid rgba(245, 180, 27, 0.55);
+  box-shadow: 0 0 20px rgba(245, 180, 27, 0.25), inset 0 0 15px rgba(245, 180, 27, 0.08);
+}
+
+.glow-border-silver {
+  border: 1px solid rgba(200, 225, 255, 0.5);
+  box-shadow: 0 0 20px rgba(180, 215, 255, 0.22), inset 0 0 15px rgba(180, 215, 255, 0.08);
+}
+
+.glow-card {
+  background: radial-gradient(130% 100% at 50% 0%, rgba(13, 27, 56, 0.7) 0%, rgba(6, 11, 24, 0.95) 100%);
+  backdrop-filter: blur(12px);
+}
+
+.cyber-grid {
+  background-size: 36px 36px;
+  background-image: 
+    linear-gradient(to right, rgba(0, 180, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 180, 255, 0.04) 1px, transparent 1px);
+}
+
+.cyber-dots {
+  background-image: radial-gradient(rgba(0, 210, 255, 0.15) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
+.glow-btn-primary {
+  background: linear-gradient(135deg, #0077ff 0%, #00d2ff 100%);
+  box-shadow: 0 4px 20px rgba(0, 150, 255, 0.35);
+  transition: all 0.2s ease;
+}
+
+.glow-btn-primary:hover {
+  box-shadow: 0 6px 28px rgba(0, 210, 255, 0.55);
+  filter: brightness(1.1);
+}
+
+.pulse-glow {
+  animation: pulse-glow-anim 2.4s infinite ease-in-out;
+}
+
+@keyframes pulse-glow-anim {
+  0%, 100% {
+    opacity: 0.7;
+    filter: drop-shadow(0 0 8px rgba(0, 210, 255, 0.4));
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 18px rgba(0, 210, 255, 0.85));
+  }
+}
+
+/* Custom cyber scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050914;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #142a4a;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 180, 255, 0.2);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0088ff;
+}
+
