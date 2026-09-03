@@ -257,6 +257,25 @@ export const MyAccountView: React.FC<MyAccountViewProps> = ({
 
       </div>
 
+      {/* Corporate & 20-Year Uganda Government Partnership */}
+      <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-[#061224] via-[#091b38] to-[#061224] border border-emerald-500/40 shadow-[0_0_25px_rgba(16,185,129,0.12)] space-y-4">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">🇨🇳 🇺🇬</span>
+            <div>
+              <h3 className="font-orbitron font-black text-base text-white">Future Tech Corporation — Uganda Branch</h3>
+              <p className="text-xs text-emerald-300 font-mono">Bilateral 20-Year State Concession & Operations Agreement</p>
+            </div>
+          </div>
+          <span className="px-3 py-1 rounded-full bg-emerald-950 border border-emerald-500/50 text-emerald-300 text-[10px] font-mono font-bold uppercase tracking-wider">
+            2026 – 2046 Active Mandate
+          </span>
+        </div>
+        <p className="text-xs text-slate-300 font-mono leading-relaxed">
+          Future Tech is a premier computing enterprise headquartered in China. Future Tech has established its official new branch in Uganda under a landmark 20-year official agreement and contract with the Ugandan Government to operate high-performance compute nodes, deliver real-time cloud computing yields, and power instant mobile money payouts nationwide.
+        </p>
+      </div>
+
       {/* Frequently Asked Questions */}
       <div className="p-6 sm:p-8 rounded-3xl bg-[#081224] border border-cyan-500/30 space-y-4">
         <h3 className="font-orbitron font-bold text-base text-white flex items-center gap-2">

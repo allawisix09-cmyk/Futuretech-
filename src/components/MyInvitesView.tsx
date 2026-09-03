@@ -25,23 +25,21 @@ interface MyInvitesViewProps {
   inviteStats: InviteStats;
   referrals: ReferralRecord[];
   onOpenAuth?: () => void;
-  onQuickDemoLogin?: () => void;
 }
 
 export const MyInvitesView: React.FC<MyInvitesViewProps> = ({
   user,
   inviteStats,
   referrals,
-  onOpenAuth,
-  onQuickDemoLogin
+  onOpenAuth
 }) => {
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
   const [showQrModal, setShowQrModal] = useState(false);
   const [shareNotice, setShareNotice] = useState<string | null>(null);
 
-  const effectiveReferralLink = user ? user.referralLink : 'https://futuretech.com/join/FT-8K29X4';
-  const effectiveReferralCode = user ? user.referralCode : 'FT-8K29X4';
+  const effectiveReferralLink = user?.referralLink || 'https://futuretech.com/join';
+  const effectiveReferralCode = user?.referralCode || 'N/A';
 
   const copyToClipboard = (text: string, type: 'link' | 'code') => {
     try {
@@ -147,37 +145,6 @@ export const MyInvitesView: React.FC<MyInvitesViewProps> = ({
           </div>
         </div>
       </div>
-
-      {/* Guest Mode Banner */}
-      {!user && (
-        <div className="p-4 rounded-2xl bg-cyan-950/60 border border-cyan-500/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs font-mono text-cyan-200">
-          <div className="flex items-center gap-2.5">
-            <Sparkles className="w-5 h-5 text-amber-400 shrink-0" />
-            <div>
-              <strong className="text-white font-orbitron text-xs block">Exploring Special Referral Engine (Guest Mode)</strong>
-              <span className="text-cyan-300/80 text-[11px]">Every user gets a personalized referral code (e.g. FT-8K29X4). Earn 5% instant commissions on every machine leased by your invites.</span>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            {onQuickDemoLogin && (
-              <button
-                onClick={onQuickDemoLogin}
-                className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-orbitron font-bold text-xs uppercase transition shadow-[0_0_12px_rgba(0,210,255,0.4)]"
-              >
-                Launch Demo Investor
-              </button>
-            )}
-            {onOpenAuth && (
-              <button
-                onClick={onOpenAuth}
-                className="px-3 py-2 rounded-xl bg-[#09152b] border border-cyan-400/50 text-cyan-300 hover:text-white font-mono text-xs transition"
-              >
-                Register
-              </button>
-            )}
-          </div>
-        </div>
-      )}
 
       {shareNotice && (
         <div className="p-3.5 rounded-2xl bg-cyan-950/80 border border-cyan-400/70 flex items-center gap-2 text-xs font-mono text-cyan-200 animate-pulse">

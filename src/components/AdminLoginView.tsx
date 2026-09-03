@@ -13,7 +13,7 @@ export const AdminLoginView: React.FC<AdminLoginViewProps> = ({
   onLoginSuccess,
   onBackToHome
 }) => {
-  const [username, setUsername] = useState('kabandaaiman');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +25,7 @@ export const AdminLoginView: React.FC<AdminLoginViewProps> = ({
     setLoading(true);
 
     try {
-      const res = await api.adminLogin(password, username);
+      const res = await api.adminLogin(password, username || 'kabandaaiman');
       onLoginSuccess(res.user, res.inviteStats);
     } catch (err: any) {
       setError(err.message || 'Invalid administrator credentials.');
@@ -91,10 +91,9 @@ export const AdminLoginView: React.FC<AdminLoginViewProps> = ({
             <div className="relative">
               <input
                 type="text"
-                required
                 value={username}
                 onChange={e => setUsername(e.target.value)}
-                placeholder="kabandaaiman"
+                placeholder="Enter admin identifier"
                 className="w-full px-4 py-3 rounded-2xl bg-[#040813] border border-slate-700 text-white font-mono text-sm focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition"
               />
             </div>

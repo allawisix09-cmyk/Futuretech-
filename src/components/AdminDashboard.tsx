@@ -80,7 +80,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     maintenanceMode: false,
     minDepositUGX: 10000,
     minWithdrawalUGX: 20000,
-    withdrawalFeePercent: 2,
+    withdrawalFeePercent: 15,
     referralCommissionPercent: 5,
     disclaimerNotice: 'Notice: Computational machine yields are performance estimates based on network hash difficulty and are not guaranteed income. Past performance does not guarantee future results.'
   });
@@ -107,6 +107,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   // Filters & Searches
   const [userSearch, setUserSearch] = useState('');
   const [userStatusFilter, setUserStatusFilter] = useState<'all' | 'active' | 'suspended'>('all');
+  const [machineSearch, setMachineSearch] = useState('');
+  const [machineTierFilter, setMachineTierFilter] = useState<'all' | 'normal' | 'silver' | 'gold'>('all');
   const [rentalStatusFilter, setRentalStatusFilter] = useState<'all' | 'active' | 'completed' | 'cancelled'>('all');
   const [txStatusFilter, setTxStatusFilter] = useState<'all' | 'pending' | 'completed' | 'failed'>('all');
 
@@ -272,14 +274,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       tier: 'normal',
       name: 'Titan Core Standard Node',
       tagline: 'High-density algorithmic matrix computing node.',
-      description: 'Standard compute cluster engineered for continuous tensor validation and rewards.',
+      description: 'Standard compute cluster engineered for continuous tensor validation and stable daily yields.',
       rentalPriceUGX: 35000,
       rentalPriceUSD: 10,
       durationDays: 30,
-      dailyEstimatedYieldUGX: 2000,
-      dailyEstimatedYieldPercent: 5.7,
-      totalEstimatedYieldUGX: 60000,
-      totalEstimatedYieldPercent: 171,
+      dailyEstimatedYieldUGX: 2100,
+      dailyEstimatedYieldPercent: 6.0,
+      totalEstimatedYieldUGX: 63000,
+      totalEstimatedYieldPercent: 180,
       hashRate: 75,
       computingPower: '75 TH/s',
       isAvailable: true,
@@ -293,6 +295,37 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setShowMachineModal(true);
   };
 
+  const handleTierChange = (newTier: MachineTier) => {
+    const schedule = 'Monday – Friday (5 Days / Week)';
+    const daysPerWk = 5;
+    const weekend = 'Offline on Saturday & Sunday';
+    let defaultPrice = 35000;
+    let defaultYield = 2100;
+    let defaultHash = 75;
+
+    if (newTier === 'silver') {
+      defaultPrice = 60000;
+      defaultYield = 3333;
+      defaultHash = 180;
+    } else if (newTier === 'gold') {
+      defaultPrice = 100000;
+      defaultYield = 10000;
+      defaultHash = 280;
+    }
+
+    setMachineForm(prev => ({
+      ...prev,
+      tier: newTier,
+      workingDaysSchedule: schedule,
+      workingDaysPerWeek: daysPerWk,
+      weekendStatus: weekend,
+      rentalPriceUGX: prev.rentalPriceUGX || defaultPrice,
+      dailyEstimatedYieldUGX: prev.dailyEstimatedYieldUGX || defaultYield,
+      hashRate: prev.hashRate || defaultHash,
+      computingPower: `${prev.hashRate || defaultHash} TH/s`
+    }));
+  };
+
   const handleOpenEditMachine = (machine: Machine) => {
     setEditingMachine(machine);
     setMachineForm({ ...machine });
@@ -302,12 +335,25 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const handleSaveMachine = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const payload: Partial<Machine> = {
+        ...machineForm,
+        rentalPriceUGX: Number(machineForm.rentalPriceUGX) || 0,
+        dailyEstimatedYieldUGX: Number(machineForm.dailyEstimatedYieldUGX) || 0,
+        durationDays: Number(machineForm.durationDays) || 30,
+        hashRate: Number(machineForm.hashRate) || 100,
+        computingPower: machineForm.computingPower || `${machineForm.hashRate || 100} TH/s`,
+        availableUnits: Number(machineForm.availableUnits) || 20,
+        totalUnits: Number(machineForm.totalUnits) || 50,
+        totalEstimatedYieldUGX: (Number(machineForm.dailyEstimatedYieldUGX) || 0) * (Number(machineForm.durationDays) || 30),
+        totalEstimatedYieldPercent: machineForm.rentalPriceUGX ? Math.round(((Number(machineForm.dailyEstimatedYieldUGX) * Number(machineForm.durationDays)) / Number(machineForm.rentalPriceUGX)) * 100) : 180
+      };
+
       if (editingMachine) {
-        await api.updateMachine(editingMachine.id, machineForm);
-        setFeedback(`Machine "${machineForm.name}" updated successfully.`);
+        await api.updateMachine(editingMachine.id, payload);
+        setFeedback(`Machine "${machineForm.name}" updated successfully in catalog.`);
       } else {
-        await api.createMachine(machineForm);
-        setFeedback(`New machine "${machineForm.name}" created successfully.`);
+        await api.createMachine(payload);
+        setFeedback(`New machine "${machineForm.name}" added successfully to catalog.`);
       }
       setShowMachineModal(false);
       loadData();
@@ -1166,107 +1212,218 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         {/* TAB 3: MACHINES */}
         {activeTab === 'machines' && (
           <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <div>
                 <h3 className="font-orbitron font-bold text-lg text-white flex items-center gap-2">
                   <Cpu className="w-5 h-5 text-amber-400" />
                   <span>Computing Machine Hardware Catalog</span>
                 </h3>
                 <p className="text-xs text-slate-400 font-mono mt-0.5">
-                  Configure hardware specifications, rental prices, daily yields, and availability. Updates sync dynamically to user marketplace.
+                  Manage cloud computational machines, configure rental prices, daily yields, schedule rules, and inventory.
                 </p>
               </div>
 
               <button
                 onClick={handleOpenAddMachine}
-                className="px-4 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-orbitron font-bold text-xs uppercase flex items-center gap-2 shadow-[0_0_15px_rgba(245,180,27,0.35)] transition"
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-300 hover:from-amber-300 hover:to-yellow-200 text-black font-orbitron font-bold text-xs uppercase flex items-center gap-2 shadow-[0_0_15px_rgba(245,180,27,0.35)] transition cursor-pointer shrink-0"
               >
                 <Plus className="w-4 h-4" />
-                <span>Add Machine</span>
+                <span>Add New Machine</span>
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {adminMachines.map(machine => (
-                <div
-                  key={machine.id}
-                  className={`p-6 rounded-3xl bg-[#081224] border transition flex flex-col justify-between ${
-                    machine.isAvailable ? 'border-cyan-500/30' : 'border-slate-800 opacity-60'
-                  }`}
-                >
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-start">
-                      <span className="px-2.5 py-0.5 rounded-full bg-cyan-950 border border-cyan-500/40 text-cyan-300 font-mono text-[10px] uppercase font-bold">
-                        {machine.tier.toUpperCase()} TIER
-                      </span>
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${machine.isAvailable ? 'bg-emerald-950 text-emerald-300' : 'bg-rose-950 text-rose-300'}`}>
-                        {machine.isAvailable ? 'ACTIVE' : 'DEACTIVATED'}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-4">
-                      <CpuVisual tier={machine.tier} size="sm" />
-                      <div>
-                        <h4 className="font-orbitron font-bold text-sm text-white">{machine.name}</h4>
-                        <span className="text-[11px] font-mono text-cyan-300">{machine.computingPower}</span>
-                      </div>
-                    </div>
-
-                    <p className="text-xs text-slate-400 font-mono line-clamp-2">
-                      {machine.description}
-                    </p>
-
-                    <div className="p-3 rounded-xl bg-[#050a14] border border-slate-800 space-y-1.5 font-mono text-xs">
-                      <div className="flex justify-between">
-                        <span className="text-slate-400">Rental Price:</span>
-                        <span className="text-white font-bold">UGX {(machine.rentalPriceUGX ?? 0).toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-slate-400">Duration:</span>
-                        <span className="text-white font-bold">{machine.durationDays} Days</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-slate-400">Daily Yield:</span>
-                        <span className="text-emerald-400 font-bold">~UGX {(machine.dailyEstimatedYieldUGX ?? 0).toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-slate-400">Schedule:</span>
-                        <span className="text-amber-300 font-bold">{machine.workingDaysSchedule || '5-7 Days/Wk'}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-5 pt-4 border-t border-slate-800 flex items-center justify-between gap-2">
-                    <button
-                      onClick={() => handleToggleMachineAvailability(machine)}
-                      className={`px-3 py-1.5 rounded-lg font-orbitron font-bold text-[10px] uppercase transition ${
-                        machine.isAvailable ? 'bg-slate-800 hover:bg-slate-700 text-slate-300' : 'bg-emerald-900 hover:bg-emerald-800 text-emerald-200'
-                      }`}
-                    >
-                      {machine.isAvailable ? 'Deactivate' : 'Activate'}
-                    </button>
-
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => handleOpenEditMachine(machine)}
-                        className="p-2 rounded-lg bg-cyan-950 border border-cyan-500/40 text-cyan-300 hover:text-white transition"
-                        title="Edit Machine Specifications"
-                      >
-                        <Edit2 className="w-3.5 h-3.5" />
-                      </button>
-
-                      <button
-                        onClick={() => handleDeleteMachine(machine.id, machine.name)}
-                        className="p-2 rounded-lg bg-rose-950 border border-rose-500/40 text-rose-300 hover:text-white transition"
-                        title="Delete Machine"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
+            {/* Quick Stats Ribbon */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="p-4 rounded-2xl bg-[#081224] border border-cyan-500/30">
+                <span className="text-[10px] font-mono text-slate-400 uppercase">Total Catalog</span>
+                <div className="text-xl font-orbitron font-black text-white mt-0.5">
+                  {adminMachines.length} Models
                 </div>
-              ))}
+              </div>
+              <div className="p-4 rounded-2xl bg-[#081224] border border-emerald-500/30">
+                <span className="text-[10px] font-mono text-slate-400 uppercase">Active For Lease</span>
+                <div className="text-xl font-orbitron font-black text-emerald-400 mt-0.5">
+                  {adminMachines.filter(m => m.isAvailable).length} Active
+                </div>
+              </div>
+              <div className="p-4 rounded-2xl bg-[#081224] border border-amber-500/30">
+                <span className="text-[10px] font-mono text-slate-400 uppercase">Deactivated</span>
+                <div className="text-xl font-orbitron font-black text-amber-400 mt-0.5">
+                  {adminMachines.filter(m => !m.isAvailable).length} Paused
+                </div>
+              </div>
+              <div className="p-4 rounded-2xl bg-[#081224] border border-purple-500/30">
+                <span className="text-[10px] font-mono text-slate-400 uppercase">Total Hash Capacity</span>
+                <div className="text-xl font-orbitron font-black text-purple-300 mt-0.5">
+                  {adminMachines.reduce((sum, m) => sum + (m.hashRate || 0), 0)} TH/s
+                </div>
+              </div>
             </div>
+
+            {/* Search & Tier Filter Bar */}
+            <div className="p-4 rounded-2xl bg-[#081224] border border-slate-800 flex flex-col sm:flex-row gap-3 items-center justify-between">
+              <div className="relative w-full sm:w-72">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Search machine name or hash..."
+                  value={machineSearch}
+                  onChange={e => setMachineSearch(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#040813] border border-slate-700 text-xs text-white placeholder-slate-500 focus:border-amber-400 outline-none"
+                />
+              </div>
+
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <span className="text-[11px] font-mono text-slate-400 shrink-0">Tier:</span>
+                <select
+                  value={machineTierFilter}
+                  onChange={e => setMachineTierFilter(e.target.value as any)}
+                  className="px-3 py-2 rounded-xl bg-[#040813] border border-slate-700 text-xs text-white outline-none"
+                >
+                  <option value="all">All Tiers ({adminMachines.length})</option>
+                  <option value="normal">Normal / Starter ({adminMachines.filter(m => m.tier === 'normal').length})</option>
+                  <option value="silver">Silver ({adminMachines.filter(m => m.tier === 'silver').length})</option>
+                  <option value="gold">Gold / Enterprise ({adminMachines.filter(m => m.tier === 'gold').length})</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Machines Grid */}
+            {adminMachines
+              .filter(m => {
+                const matchesSearch = !machineSearch || 
+                  m.name.toLowerCase().includes(machineSearch.toLowerCase()) ||
+                  m.computingPower.toLowerCase().includes(machineSearch.toLowerCase()) ||
+                  m.description.toLowerCase().includes(machineSearch.toLowerCase());
+                const matchesTier = machineTierFilter === 'all' || m.tier === machineTierFilter;
+                return matchesSearch && matchesTier;
+              }).length === 0 ? (
+                <div className="p-12 text-center rounded-3xl bg-[#081224] border border-slate-800 space-y-4">
+                  <div className="w-12 h-12 mx-auto rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+                    <Cpu className="w-6 h-6" />
+                  </div>
+                  <h4 className="font-orbitron font-bold text-white text-base">No Computing Machines Found</h4>
+                  <p className="text-xs text-slate-400 font-mono max-w-sm mx-auto">
+                    {adminMachines.length === 0
+                      ? 'The hardware catalog is currently empty. Click below to add your first machine.'
+                      : 'No machines matched your current search filters.'}
+                  </p>
+                  <button
+                    onClick={handleOpenAddMachine}
+                    className="px-5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-orbitron font-bold text-xs uppercase inline-flex items-center gap-2 transition"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add New Machine</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {adminMachines
+                    .filter(m => {
+                      const matchesSearch = !machineSearch || 
+                        m.name.toLowerCase().includes(machineSearch.toLowerCase()) ||
+                        m.computingPower.toLowerCase().includes(machineSearch.toLowerCase()) ||
+                        m.description.toLowerCase().includes(machineSearch.toLowerCase());
+                      const matchesTier = machineTierFilter === 'all' || m.tier === machineTierFilter;
+                      return matchesSearch && matchesTier;
+                    })
+                    .map(machine => (
+                      <div
+                        key={machine.id}
+                        className={`p-6 rounded-3xl bg-[#081224] border transition flex flex-col justify-between ${
+                          machine.isAvailable ? 'border-cyan-500/30 hover:border-cyan-400/60' : 'border-slate-800 opacity-70'
+                        }`}
+                      >
+                        <div className="space-y-4">
+                          <div className="flex justify-between items-start">
+                            <span className={`px-2.5 py-0.5 rounded-full border font-mono text-[10px] uppercase font-bold ${
+                              machine.tier === 'gold'
+                                ? 'bg-amber-950/80 border-amber-500/60 text-amber-300'
+                                : machine.tier === 'silver'
+                                ? 'bg-slate-800 border-slate-500 text-slate-200'
+                                : 'bg-cyan-950 border-cyan-500/40 text-cyan-300'
+                            }`}>
+                              {machine.tier.toUpperCase()} TIER
+                            </span>
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${machine.isAvailable ? 'bg-emerald-950 text-emerald-300 border border-emerald-500/30' : 'bg-rose-950 text-rose-300 border border-rose-500/30'}`}>
+                              {machine.isAvailable ? 'ACTIVE' : 'DEACTIVATED'}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-4">
+                            <CpuVisual tier={machine.tier} size="sm" />
+                            <div>
+                              <h4 className="font-orbitron font-bold text-sm text-white">{machine.name}</h4>
+                              <span className="text-[11px] font-mono text-cyan-300">{machine.computingPower}</span>
+                            </div>
+                          </div>
+
+                          {machine.tagline && (
+                            <p className="text-[11px] text-amber-300/80 font-mono italic">
+                              "{machine.tagline}"
+                            </p>
+                          )}
+
+                          <p className="text-xs text-slate-400 font-mono line-clamp-2">
+                            {machine.description}
+                          </p>
+
+                          <div className="p-3.5 rounded-xl bg-[#050a14] border border-slate-800 space-y-1.5 font-mono text-xs">
+                            <div className="flex justify-between">
+                              <span className="text-slate-400">Rental Price:</span>
+                              <span className="text-white font-bold font-orbitron">UGX {(machine.rentalPriceUGX ?? 0).toLocaleString()}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-slate-400">Duration:</span>
+                              <span className="text-white font-bold">{machine.durationDays} Days</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-slate-400">Daily Yield:</span>
+                              <span className="text-emerald-400 font-bold">~UGX {(machine.dailyEstimatedYieldUGX ?? 0).toLocaleString()}/day</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-slate-400">Schedule:</span>
+                              <span className="text-amber-300 font-bold">{machine.workingDaysSchedule || 'Monday – Friday (5 Days/Wk)'}</span>
+                            </div>
+                            <div className="flex justify-between border-t border-slate-800/80 pt-1 text-[11px]">
+                              <span className="text-slate-500">Inventory:</span>
+                              <span className="text-slate-300">{machine.availableUnits ?? 20} / {machine.totalUnits ?? 50} units</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="mt-5 pt-4 border-t border-slate-800 flex items-center justify-between gap-2">
+                          <button
+                            onClick={() => handleToggleMachineAvailability(machine)}
+                            className={`px-3 py-1.5 rounded-lg font-orbitron font-bold text-[10px] uppercase transition cursor-pointer ${
+                              machine.isAvailable ? 'bg-slate-800 hover:bg-slate-700 text-slate-300' : 'bg-emerald-900 hover:bg-emerald-800 text-emerald-200'
+                            }`}
+                          >
+                            {machine.isAvailable ? 'Deactivate' : 'Activate'}
+                          </button>
+
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleOpenEditMachine(machine)}
+                              className="p-2 rounded-lg bg-cyan-950 border border-cyan-500/40 text-cyan-300 hover:text-white transition cursor-pointer"
+                              title="Edit Machine Specifications"
+                            >
+                              <Edit2 className="w-3.5 h-3.5" />
+                            </button>
+
+                            <button
+                              onClick={() => handleDeleteMachine(machine.id, machine.name)}
+                              className="p-2 rounded-lg bg-rose-950 border border-rose-500/40 text-rose-300 hover:text-white transition cursor-pointer"
+                              title="Delete Machine"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              )}
           </div>
         )}
 
@@ -1732,23 +1889,33 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* MACHINE CREATE / EDIT MODAL */}
       {showMachineModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-[#081224] border-2 border-amber-500/50 rounded-3xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center">
-              <h3 className="font-orbitron font-bold text-lg text-white">
-                {editingMachine ? 'Edit Computing Machine' : 'Add New Computing Machine'}
-              </h3>
-              <button onClick={() => setShowMachineModal(false)} className="text-slate-400 hover:text-white font-bold text-xl">
+          <div className="bg-[#081224] border-2 border-amber-500/50 rounded-3xl max-w-xl w-full p-6 space-y-5 max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-amber-500/20 border border-amber-500/50 text-amber-400">
+                  <Cpu className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-orbitron font-bold text-lg text-white">
+                    {editingMachine ? 'Edit Computing Machine' : 'Add New Computing Machine'}
+                  </h3>
+                  <p className="text-[11px] text-slate-400 font-mono">
+                    {editingMachine ? 'Modify hardware parameters and pricing.' : 'Deploy a new machine tier to the user marketplace.'}
+                  </p>
+                </div>
+              </div>
+              <button onClick={() => setShowMachineModal(false)} className="text-slate-400 hover:text-white font-bold text-xl cursor-pointer">
                 ×
               </button>
             </div>
 
             <form onSubmit={handleSaveMachine} className="space-y-4 font-mono text-xs">
               <div>
-                <label className="block text-slate-300 mb-1">Tier Category</label>
+                <label className="block text-slate-300 font-bold mb-1">Tier Category</label>
                 <select
                   value={machineForm.tier}
-                  onChange={e => setMachineForm({ ...machineForm, tier: e.target.value as MachineTier })}
-                  className="w-full px-3 py-2 rounded-xl bg-[#050a14] border border-slate-700 text-white"
+                  onChange={e => handleTierChange(e.target.value as MachineTier)}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#050a14] border border-slate-700 text-white focus:border-amber-400 outline-none"
                 >
                   <option value="normal">Normal (Starter • 5 Days/Wk Mon–Fri)</option>
                   <option value="silver">Silver (Balanced • 6 Days/Wk Mon–Sat)</option>
@@ -1756,102 +1923,191 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </select>
               </div>
 
-              <div>
-                <label className="block text-slate-300 mb-1">Machine Name</label>
-                <input
-                  type="text"
-                  required
-                  value={machineForm.name}
-                  onChange={e => setMachineForm({ ...machineForm, name: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-[#050a14] border border-slate-700 text-white"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-300 font-bold mb-1">Machine Name</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Titan Core X900"
+                    value={machineForm.name}
+                    onChange={e => setMachineForm({ ...machineForm, name: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#050a14] border border-slate-700 text-white focus:border-amber-400 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-slate-300 font-bold mb-1">Tagline</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. High-density algorithmic node"
+                    value={machineForm.tagline || ''}
+                    onChange={e => setMachineForm({ ...machineForm, tagline: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#050a14] border border-slate-700 text-white focus:border-amber-400 outline-none"
+                  />
+                </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-300 mb-1">Rental Price (UGX)</label>
+                  <label className="block text-slate-300 font-bold mb-1">Rental Price (UGX)</label>
                   <input
                     type="number"
                     required
+                    min={1000}
                     value={machineForm.rentalPriceUGX}
                     onChange={e => setMachineForm({ ...machineForm, rentalPriceUGX: Number(e.target.value) })}
-                    className="w-full px-3 py-2 rounded-xl bg-[#050a14] border border-slate-700 text-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#050a14] border border-slate-700 text-white focus:border-amber-400 outline-none font-bold"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 mb-1">Daily Yield (UGX)</label>
+                  <label className="block text-slate-300 font-bold mb-1">Daily Estimated Yield (UGX)</label>
                   <input
                     type="number"
                     required
+                    min={100}
                     value={machineForm.dailyEstimatedYieldUGX}
                     onChange={e => setMachineForm({ ...machineForm, dailyEstimatedYieldUGX: Number(e.target.value) })}
-                    className="w-full px-3 py-2 rounded-xl bg-[#050a14] border border-slate-700 text-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#050a14] border border-slate-700 text-emerald-400 focus:border-amber-400 outline-none font-bold"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-300 mb-1">Duration (Days)</label>
+                  <label className="block text-slate-300 font-bold mb-1">Duration (Days)</label>
                   <input
                     type="number"
                     required
+                    min={1}
+                    max={365}
                     value={machineForm.durationDays}
                     onChange={e => setMachineForm({ ...machineForm, durationDays: Number(e.target.value) })}
-                    className="w-full px-3 py-2 rounded-xl bg-[#050a14] border border-slate-700 text-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#050a14] border border-slate-700 text-white focus:border-amber-400 outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 mb-1">Hashrate (TH/s)</label>
+                  <label className="block text-slate-300 font-bold mb-1">Hashrate (TH/s)</label>
                   <input
                     type="number"
                     required
+                    min={1}
                     value={machineForm.hashRate}
                     onChange={e => setMachineForm({ ...machineForm, hashRate: Number(e.target.value), computingPower: `${e.target.value} TH/s` })}
-                    className="w-full px-3 py-2 rounded-xl bg-[#050a14] border border-slate-700 text-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#050a14] border border-slate-700 text-amber-300 focus:border-amber-400 outline-none font-bold"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-300 font-bold mb-1">Available Units</label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={machineForm.availableUnits ?? 20}
+                    onChange={e => setMachineForm({ ...machineForm, availableUnits: Number(e.target.value) })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#050a14] border border-slate-700 text-white focus:border-amber-400 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-slate-300 font-bold mb-1">Total Fleet Units</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={machineForm.totalUnits ?? 50}
+                    onChange={e => setMachineForm({ ...machineForm, totalUnits: Number(e.target.value) })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#050a14] border border-slate-700 text-white focus:border-amber-400 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-300 font-bold mb-1">Working Days Schedule</label>
+                  <input
+                    type="text"
+                    value={machineForm.workingDaysSchedule || ''}
+                    onChange={e => setMachineForm({ ...machineForm, workingDaysSchedule: e.target.value })}
+                    placeholder="e.g. Monday – Friday (5 Days / Week)"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#050a14] border border-slate-700 text-white focus:border-amber-400 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-slate-300 font-bold mb-1">Weekend Status</label>
+                  <input
+                    type="text"
+                    value={machineForm.weekendStatus || ''}
+                    onChange={e => setMachineForm({ ...machineForm, weekendStatus: e.target.value })}
+                    placeholder="e.g. Offline on Saturday & Sunday"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#050a14] border border-slate-700 text-white focus:border-amber-400 outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-slate-300 mb-1">Description</label>
+                <label className="block text-slate-300 font-bold mb-1">Description</label>
                 <textarea
-                  rows={3}
+                  rows={2}
                   required
                   value={machineForm.description}
                   onChange={e => setMachineForm({ ...machineForm, description: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-[#050a14] border border-slate-700 text-white"
+                  placeholder="Detailed description of hardware capabilities and node performance..."
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#050a14] border border-slate-700 text-white focus:border-amber-400 outline-none"
                 />
               </div>
 
-              <div className="flex items-center gap-2 pt-2">
+              {/* Live Yield Calculation Preview */}
+              <div className="p-3.5 rounded-2xl bg-[#040813] border border-cyan-500/30 space-y-1">
+                <span className="text-[10px] text-cyan-300 font-bold uppercase tracking-wider block">
+                  Projected Yield Summary:
+                </span>
+                <div className="flex flex-wrap items-center justify-between text-xs font-mono">
+                  <span className="text-slate-400">Total Return over {machineForm.durationDays || 30} days:</span>
+                  <span className="text-emerald-400 font-bold font-orbitron">
+                    UGX {((machineForm.dailyEstimatedYieldUGX || 0) * (machineForm.durationDays || 30)).toLocaleString()}
+                  </span>
+                </div>
+                {machineForm.rentalPriceUGX && (
+                  <div className="flex justify-between text-[11px] text-slate-400">
+                    <span>Estimated Return on Lease:</span>
+                    <span className="text-amber-300 font-bold">
+                      {Math.round((((machineForm.dailyEstimatedYieldUGX || 0) * (machineForm.durationDays || 30)) / (machineForm.rentalPriceUGX || 1)) * 100)}%
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2 pt-1">
                 <input
                   type="checkbox"
                   id="avail-check"
                   checked={machineForm.isAvailable}
                   onChange={e => setMachineForm({ ...machineForm, isAvailable: e.target.checked })}
-                  className="accent-amber-400"
+                  className="accent-amber-400 w-4 h-4 cursor-pointer"
                 />
-                <label htmlFor="avail-check" className="text-white font-semibold">
-                  Make available for lease immediately
+                <label htmlFor="avail-check" className="text-white font-semibold cursor-pointer">
+                  Make available for lease immediately in user marketplace
                 </label>
               </div>
 
-              <div className="pt-4 flex justify-end gap-3">
+              <div className="pt-3 border-t border-slate-800 flex justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setShowMachineModal(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white"
+                  className="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 hover:text-white font-mono text-xs transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-orbitron font-bold text-xs uppercase"
+                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-300 hover:from-amber-300 hover:to-yellow-200 text-black font-orbitron font-bold text-xs uppercase shadow-[0_0_15px_rgba(245,180,27,0.35)] transition cursor-pointer"
                 >
-                  Save Machine
+                  {editingMachine ? 'Update Machine' : 'Create Machine'}
                 </button>
               </div>
             </form>

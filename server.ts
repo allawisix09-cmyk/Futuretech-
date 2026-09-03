@@ -77,7 +77,7 @@ class Database {
     maintenanceMode: false,
     minDepositUGX: 10000,
     minWithdrawalUGX: 20000,
-    withdrawalFeePercent: 2,
+    withdrawalFeePercent: 15,
     referralCommissionPercent: 5,
     disclaimerNotice: 'Notice: Computational machine yields are performance estimates based on network hash difficulty and are not guaranteed income. Past performance does not guarantee future results.'
   };
@@ -120,9 +120,9 @@ class Database {
         id: 'cpu-gold-900',
         tier: 'gold',
         name: 'GOLD CPU — Quantum Titan X-900',
-        badge: 'Top Yield • 7 Days/Wk Continuous',
+        badge: 'Enterprise • Mon–Fri Schedule',
         tagline: 'High-density quantum-accelerated matrix processing for extreme cloud workloads.',
-        description: 'The pinnacle of high-performance computing clusters. Works every single day (Monday to Sunday continuous) with daily automated 12:00 PM payouts.',
+        description: 'The pinnacle of high-performance computing clusters. Operates Monday to Friday (weekends Saturday and Sunday off) with daily automated 12:00 PM payouts.',
         computingPower: '480 TH/s (Enterprise Tier)',
         hashRate: 480,
         rentalPriceUGX: 150000,
@@ -133,10 +133,10 @@ class Database {
         dailyEstimatedYieldPercent: 5.56,
         totalEstimatedYieldUGX: 250000,
         totalEstimatedYieldPercent: 167,
-        workingDaysSchedule: 'Everyday (7 Days / Week)',
-        workingDaysPerWeek: 7,
-        weekendStatus: 'Active Every Day (Mon – Sun)',
-        updateTime: 'Daily at 12:00 PM',
+        workingDaysSchedule: 'Monday – Friday (5 Days / Week)',
+        workingDaysPerWeek: 5,
+        weekendStatus: 'Offline on Saturday & Sunday',
+        updateTime: 'Daily at 12:00 PM (Mon–Fri)',
         availableUnits: 14,
         quantity: 14,
         totalUnits: 50,
@@ -152,9 +152,9 @@ class Database {
         },
         terms: [
           'Estimated daily yield is calculated based on verified computing network load.',
-          'Operates 7 days a week (Monday through Sunday continuous).',
-          'Daily yield is automatically computed and updated every 12:00 PM.',
-          'Rental duration is 30 operational days with 24/7 dedicated compute power.'
+          'Operates 5 days a week (Monday through Friday; does not work on Saturday or Sunday).',
+          'Daily yield is automatically computed and updated every 12:00 PM on active weekdays.',
+          'Rental duration is 30 operational days with dedicated compute power.'
         ],
         isAvailable: true,
         featured: true
@@ -163,9 +163,9 @@ class Database {
         id: 'cpu-silver-500',
         tier: 'silver',
         name: 'SILVER CPU — Matrix Reactor S-500',
-        badge: 'Balanced • 6 Days/Wk (Mon–Sat)',
+        badge: 'Balanced • 5 Days/Wk (Mon–Fri)',
         tagline: 'Dual-die silicon processor engineered for heavy AI model fine-tuning and node validation.',
-        description: 'A powerhouse compute engine offering optimal energy efficiency. Operates 6 days a week (Monday to Saturday, Sunday maintenance pause) with automated 12:00 PM payouts.',
+        description: 'A powerhouse compute engine offering optimal energy efficiency. Operates 5 days a week (Monday to Friday, weekends Saturday and Sunday off) with automated 12:00 PM payouts.',
         computingPower: '180 TH/s (Mid Tier)',
         hashRate: 180,
         rentalPriceUGX: 60000,
@@ -176,10 +176,10 @@ class Database {
         dailyEstimatedYieldPercent: 5.56,
         totalEstimatedYieldUGX: 100000,
         totalEstimatedYieldPercent: 167,
-        workingDaysSchedule: '6 Days / Week (Mon – Sat)',
-        workingDaysPerWeek: 6,
-        weekendStatus: 'Active Saturday • Paused Sunday',
-        updateTime: 'Daily at 12:00 PM',
+        workingDaysSchedule: 'Monday – Friday (5 Days / Week)',
+        workingDaysPerWeek: 5,
+        weekendStatus: 'Offline on Saturday & Sunday',
+        updateTime: 'Daily at 12:00 PM (Mon–Fri)',
         availableUnits: 28,
         quantity: 28,
         totalUnits: 100,
@@ -194,8 +194,8 @@ class Database {
           algorithm: 'SHA-256 / Ethash Parallel Hybrid'
         },
         terms: [
-          'Operates 6 days a week (Monday through Saturday; Sunday is maintenance rest).',
-          'Daily earnings update automatically every day at 12:00 PM.',
+          'Operates 5 days a week (Monday through Friday; does not work on Saturday or Sunday).',
+          'Daily earnings update automatically every weekday at 12:00 PM.',
           '30 active operational days total term.'
         ],
         isAvailable: true,
@@ -221,7 +221,7 @@ class Database {
         workingDaysSchedule: 'Monday – Friday (5 Days / Week)',
         workingDaysPerWeek: 5,
         weekendStatus: 'Offline on Saturday & Sunday',
-        updateTime: 'Daily at 12:00 PM',
+        updateTime: 'Daily at 12:00 PM (Mon–Fri)',
         availableUnits: 82,
         quantity: 82,
         totalUnits: 200,
@@ -242,10 +242,182 @@ class Database {
         ],
         isAvailable: true,
         featured: false
+      },
+      {
+        id: 'cpu-ng-series',
+        tier: 'normal',
+        name: 'NG series',
+        badge: '20-Day Fast Cycle • Mon–Fri',
+        tagline: 'High-efficiency 20-day algorithmic matrix compute cluster (Mon–Fri).',
+        description: 'Optimized NG Series cluster engineered for rapid 20-day cycles with 2,400 UGX daily automated yield and 48,000 UGX total return. Weekends (Sat & Sun) off.',
+        computingPower: '85 TH/s (NG Series)',
+        hashRate: 85,
+        rentalPriceUGX: 30000,
+        priceUGX: 30000,
+        rentalPriceUSD: 8,
+        durationDays: 20,
+        dailyEstimatedYieldUGX: 2400,
+        dailyEstimatedYieldPercent: 8.0,
+        totalEstimatedYieldUGX: 48000,
+        totalEstimatedYieldPercent: 160,
+        workingDaysSchedule: 'Monday – Friday (5 Days / Week)',
+        workingDaysPerWeek: 5,
+        weekendStatus: 'Offline on Saturday & Sunday',
+        updateTime: 'Daily at 12:00 PM (Mon–Fri)',
+        availableUnits: 50,
+        quantity: 50,
+        totalUnits: 100,
+        soldQuantity: 18,
+        specifications: {
+          cores: '64 Cores @ 4.2 GHz Turbo',
+          architecture: 'NG Tensor Matrix Architecture',
+          memory: '96 GB GDDR6 High-Speed VRAM',
+          powerConsumption: '380W Eco-Compute Standard',
+          cooling: 'Dual Liquid Vapor Chamber Loop',
+          uptimeGuarantee: '99.85% Node SLA',
+          algorithm: 'Tensor AI Processing & Validation'
+        },
+        terms: [
+          '20-day dedicated high-performance compute cycle (Monday through Friday).',
+          'Does not work on Saturday and Sunday (weekends paused).',
+          'Daily earnings of UGX 2,400 distributed automatically every 12:00 PM on weekdays.',
+          'Total projected yield of UGX 48,000 upon 20-day term completion.'
+        ],
+        isAvailable: true,
+        featured: true
+      },
+      {
+        id: 'cpu-us-series-20',
+        tier: 'gold',
+        name: 'US series',
+        badge: '2x Double Return • 20 Days',
+        tagline: 'Ultra-speed multi-core compute cluster with 10,000 UGX daily yield (Mon–Fri).',
+        description: 'Enterprise-grade US Series processor engineered for high-throughput tensor operations with a 100% net profit double return over 20 days. Weekends off.',
+        computingPower: '280 TH/s (US High-Yield)',
+        hashRate: 280,
+        rentalPriceUGX: 100000,
+        priceUGX: 100000,
+        rentalPriceUSD: 27,
+        durationDays: 20,
+        dailyEstimatedYieldUGX: 10000,
+        dailyEstimatedYieldPercent: 10.0,
+        totalEstimatedYieldUGX: 200000,
+        totalEstimatedYieldPercent: 200,
+        workingDaysSchedule: 'Monday – Friday (5 Days / Week)',
+        workingDaysPerWeek: 5,
+        weekendStatus: 'Offline on Saturday & Sunday',
+        updateTime: 'Daily at 12:00 PM (Mon–Fri)',
+        availableUnits: 30,
+        quantity: 30,
+        totalUnits: 60,
+        soldQuantity: 24,
+        specifications: {
+          cores: '160 Cores @ 5.2 GHz Cryo-Boost',
+          architecture: 'US High-Bandwidth Cryo-Core',
+          memory: '256 GB High-Bandwidth HBM3 Memory',
+          powerConsumption: '850W Performance-Optimized',
+          cooling: 'Active Liquid Cryogenic Loop',
+          uptimeGuarantee: '99.95% Enterprise SLA',
+          algorithm: 'Quantum AI Matrix Verification'
+        },
+        terms: [
+          '20-day enterprise compute duration (Monday to Friday active).',
+          'Does not work on Saturday and Sunday (weekends paused).',
+          'Daily payout of UGX 10,000 at 12:00 PM automated distribution on weekdays.',
+          'Guaranteed 200,000 UGX total return upon 20-day completion.'
+        ],
+        isAvailable: true,
+        featured: true
+      },
+      {
+        id: 'cpu-dr-series-90',
+        tier: 'gold',
+        name: 'DR series',
+        badge: 'Long-Term 90D • Mon–Fri Schedule',
+        tagline: 'Extended deep compute engine with 600,000 UGX total return over 90 active days.',
+        description: 'Deep Research DR Series cluster built for heavy sustained computational learning (Monday through Friday; offline Saturday & Sunday), streaming 6,666 UGX daily.',
+        computingPower: '210 TH/s (DR Deep Node)',
+        hashRate: 210,
+        rentalPriceUGX: 50000,
+        priceUGX: 50000,
+        rentalPriceUSD: 14,
+        durationDays: 90,
+        dailyEstimatedYieldUGX: 6666,
+        dailyEstimatedYieldPercent: 13.33,
+        totalEstimatedYieldUGX: 600000,
+        totalEstimatedYieldPercent: 1200,
+        workingDaysSchedule: 'Monday – Friday (5 Days / Week)',
+        workingDaysPerWeek: 5,
+        weekendStatus: 'Offline on Saturday & Sunday',
+        updateTime: 'Daily at 12:00 PM (Mon–Fri)',
+        availableUnits: 40,
+        quantity: 40,
+        totalUnits: 80,
+        soldQuantity: 32,
+        specifications: {
+          cores: '192 Cores @ 4.8 GHz Unified',
+          architecture: 'DR Deep-Neural Acceleration Matrix',
+          memory: '384 GB Unified Compute Memory',
+          powerConsumption: '720W Sustained Load',
+          cooling: 'Hydrodynamic Immersion Core',
+          uptimeGuarantee: '99.95% Continuous SLA',
+          algorithm: 'Deep Learning Model Optimization'
+        },
+        terms: [
+          'Extended 90-day continuous computing duration (Monday through Friday).',
+          'Does not work on Saturday and Sunday (weekends paused).',
+          'Automated daily yield of UGX 6,666 credited every 12:00 PM on weekdays.',
+          'Massive total yield of UGX 600,000 upon 90-day completion.'
+        ],
+        isAvailable: true,
+        featured: true
+      },
+      {
+        id: 'cpu-us-series-80',
+        tier: 'gold',
+        name: 'US series (80 Days)',
+        badge: 'Extended 80D • Mon–Fri Schedule',
+        tagline: 'High-yield 80-day sustained compute power with 8,550 UGX daily return.',
+        description: 'Powerful US Series long-duration compute node generating 8,550 UGX daily for 80 active days (Monday through Friday; offline on Saturday & Sunday).',
+        computingPower: '250 TH/s (US Tensor Max)',
+        hashRate: 250,
+        rentalPriceUGX: 60000,
+        priceUGX: 60000,
+        rentalPriceUSD: 16,
+        durationDays: 80,
+        dailyEstimatedYieldUGX: 8550,
+        dailyEstimatedYieldPercent: 14.25,
+        totalEstimatedYieldUGX: 700000,
+        totalEstimatedYieldPercent: 1167,
+        workingDaysSchedule: 'Monday – Friday (5 Days / Week)',
+        workingDaysPerWeek: 5,
+        weekendStatus: 'Offline on Saturday & Sunday',
+        updateTime: 'Daily at 12:00 PM (Mon–Fri)',
+        availableUnits: 35,
+        quantity: 35,
+        totalUnits: 75,
+        soldQuantity: 38,
+        specifications: {
+          cores: '224 Cores @ 5.0 GHz Multi-Threaded',
+          architecture: 'Advanced US Tensor Super-Node',
+          memory: '448 GB High-Bandwidth VRAM',
+          powerConsumption: '900W High-Efficiency',
+          cooling: 'Cryogenic Dual-Chamber Immersion',
+          uptimeGuarantee: '99.95% SLA Guarantee',
+          algorithm: 'Distributed Cluster Compute & Hash'
+        },
+        terms: [
+          '80 operational days of dedicated compute power (Monday through Friday).',
+          'Does not work on Saturday and Sunday (weekends paused).',
+          'Daily yield of UGX 8,550 automatically credited every 12:00 PM on weekdays.',
+          'Cumulative total yield of UGX 700,000 upon 80-day completion.'
+        ],
+        isAvailable: true,
+        featured: true
       }
     ];
 
-    // 2. Seed Admin User
+    // 2. Seed Root Administrator Account
     const adminId = 'usr_admin_001';
     const adminUser: User = {
       id: adminId,
@@ -255,11 +427,11 @@ class Database {
       role: 'admin',
       referralCode: 'FT-ADMIN1',
       referralLink: 'https://futuretech.com/join/FT-ADMIN1',
-      walletBalanceUGX: 2850000,
-      totalDepositedUGX: 3000000,
-      totalWithdrawnUGX: 500000,
-      totalEarningsUGX: 350000,
-      todayEarningsUGX: 42000,
+      walletBalanceUGX: 0,
+      totalDepositedUGX: 0,
+      totalWithdrawnUGX: 0,
+      totalEarningsUGX: 0,
+      todayEarningsUGX: 0,
       status: 'active',
       createdAt: '2026-01-10T08:00:00.000Z'
     };
@@ -267,408 +439,36 @@ class Database {
     const initialAdminPassword = process.env.ADMIN_PASSWORD || '0000000000';
     this.passwords.set(adminId, hashPassword(initialAdminPassword));
 
-    // 3. Seed Active Demo User
-    const demoUserId = 'usr_demo_002';
-    const demoUser: User = {
-      id: demoUserId,
-      username: 'alex_futurist',
-      email: 'futurettech01@gmail.com',
-      phoneNumber: '+256772123456',
-      role: 'user',
-      referralCode: 'FT-8K29X4',
-      referralLink: 'https://futuretech.com/join/FT-8K29X4',
-      referredBy: adminId,
-      referrerUsername: 'kabandaaiman',
-      walletBalanceUGX: 248500,
-      totalDepositedUGX: 650000,
-      totalWithdrawnUGX: 180000,
-      totalEarningsUGX: 312500,
-      todayEarningsUGX: 40500,
-      status: 'active',
-      createdAt: '2026-07-15T10:30:00.000Z'
-    };
-    this.users.push(demoUser);
-    this.passwords.set(demoUserId, hashPassword('FutureTech@2026'));
+    // Production environment clean initialization:
+    // Real users register through /api/auth/register or login with their real credentials.
+    this.rentals = [];
+    this.referrals = [];
+    this.transactions = [];
+    this.notifications = [];
+    this.deposits = [];
+    this.purchases = [];
 
-    // 4. Seed Rentals for Demo User (1 Gold CPU & 1 Silver CPU active)
-    const goldRental: MachineRental = {
-      id: 'rnt_gold_001',
-      userId: demoUserId,
-      machineId: 'cpu-gold-900',
-      machineName: 'GOLD CPU — Quantum Titan X-900',
-      machineTier: 'gold',
-      computingPower: '480 TH/s',
-      hashRate: 480,
-      rentalPriceUGX: 150000,
-      dailyEstimatedYieldUGX: 8333,
-      accumulatedEarningsUGX: 50000,
-      claimedEarningsUGX: 41667,
-      unclaimedEarningsUGX: 8333,
-      durationDays: 30,
-      workingDaysCount: 6,
-      workingDaysSchedule: 'Everyday (7 Days / Week)',
-      workingDaysPerWeek: 7,
-      weekendStatus: 'Active Every Day (Mon – Sun)',
-      isWorkingToday: true,
-      nextUpdateAt: new Date(new Date().setHours(12, 0, 0, 0) + (new Date().getHours() >= 12 ? 86400000 : 0)).toISOString(),
-      startDate: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
-      endDate: new Date(Date.now() + 24 * 24 * 60 * 60 * 1000).toISOString(),
-      status: 'active',
-      lastYieldTick: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
-    };
-
-    const currentDay = new Date().getDay();
-    const silverIsActiveToday = currentDay >= 1 && currentDay <= 6; // Mon-Sat active, Sun off
-
-    const silverRental: MachineRental = {
-      id: 'rnt_silver_002',
-      userId: demoUserId,
-      machineId: 'cpu-silver-500',
-      machineName: 'SILVER CPU — Matrix Reactor S-500',
-      machineTier: 'silver',
-      computingPower: '180 TH/s',
-      hashRate: 180,
-      rentalPriceUGX: 60000,
-      dailyEstimatedYieldUGX: 3333,
-      accumulatedEarningsUGX: 26664,
-      claimedEarningsUGX: 23331,
-      unclaimedEarningsUGX: 3333,
-      durationDays: 30,
-      workingDaysCount: 8,
-      workingDaysSchedule: '6 Days / Week (Mon – Sat)',
-      workingDaysPerWeek: 6,
-      weekendStatus: 'Active Saturday • Paused Sunday',
-      isWorkingToday: silverIsActiveToday,
-      nextUpdateAt: new Date(new Date().setHours(12, 0, 0, 0) + (new Date().getHours() >= 12 ? 86400000 : 0)).toISOString(),
-      startDate: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
-      endDate: new Date(Date.now() + 22 * 24 * 60 * 60 * 1000).toISOString(),
-      status: 'active',
-      lastYieldTick: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
-    };
-
-    this.rentals.push(goldRental, silverRental);
-
-    // 5. Seed Referrals for Demo User (25 Total: 20 Successful, 5 Pending, 18 Active with Machines)
-    // Matches the exact prompt example: Total Invites 25, Successful 20, Pending 5, Active 18
-    const sampleReferralUsers = [
-      { id: 'ref_u01', name: 'david_k', phone: '+256782112233', status: 'active' as const, daysAgo: 1, activeMachine: true, reward: 22500 },
-      { id: 'ref_u02', name: 'sarah_m', phone: '+256701998877', status: 'active' as const, daysAgo: 2, activeMachine: true, reward: 7500 },
-      { id: 'ref_u03', name: 'joseph_t', phone: '+256773445566', status: 'active' as const, daysAgo: 3, activeMachine: true, reward: 22500 },
-      { id: 'ref_u04', name: 'grace_n', phone: '+256752334411', status: 'active' as const, daysAgo: 4, activeMachine: true, reward: 7500 },
-      { id: 'ref_u05', name: 'paul_o', phone: '+256788990011', status: 'active' as const, daysAgo: 5, activeMachine: true, reward: 2500 },
-      { id: 'ref_u06', name: 'esther_b', phone: '+256704112299', status: 'active' as const, daysAgo: 6, activeMachine: true, reward: 22500 },
-      { id: 'ref_u07', name: 'brian_l', phone: '+256779887766', status: 'active' as const, daysAgo: 8, activeMachine: true, reward: 7500 },
-      { id: 'ref_u08', name: 'rachel_k', phone: '+256750334455', status: 'active' as const, daysAgo: 9, activeMachine: true, reward: 22500 },
-      { id: 'ref_u09', name: 'emmanuel_s', phone: '+256781223344', status: 'active' as const, daysAgo: 11, activeMachine: true, reward: 2500 },
-      { id: 'ref_u10', name: 'mercy_a', phone: '+256706554433', status: 'active' as const, daysAgo: 12, activeMachine: true, reward: 7500 },
-      { id: 'ref_u11', name: 'solomon_m', phone: '+256774667788', status: 'active' as const, daysAgo: 14, activeMachine: true, reward: 22500 },
-      { id: 'ref_u12', name: 'irene_w', phone: '+256758990022', status: 'active' as const, daysAgo: 15, activeMachine: true, reward: 7500 },
-      { id: 'ref_u13', name: 'daniel_k', phone: '+256783114477', status: 'active' as const, daysAgo: 16, activeMachine: true, reward: 2500 },
-      { id: 'ref_u14', name: 'patricia_n', phone: '+256708225588', status: 'active' as const, daysAgo: 18, activeMachine: true, reward: 22500 },
-      { id: 'ref_u15', name: 'moses_b', phone: '+256775336699', status: 'active' as const, daysAgo: 20, activeMachine: true, reward: 7500 },
-      { id: 'ref_u16', name: 'florence_t', phone: '+256751447700', status: 'active' as const, daysAgo: 21, activeMachine: true, reward: 22500 },
-      { id: 'ref_u17', name: 'richard_o', phone: '+256784558811', status: 'active' as const, daysAgo: 23, activeMachine: true, reward: 7500 },
-      { id: 'ref_u18', name: 'anita_m', phone: '+256709669922', status: 'active' as const, daysAgo: 25, activeMachine: true, reward: 22500 },
-      { id: 'ref_u19', name: 'charles_l', phone: '+256776770033', status: 'registered' as const, daysAgo: 26, activeMachine: false, reward: 0 },
-      { id: 'ref_u20', name: 'dorothy_k', phone: '+256759881144', status: 'registered' as const, daysAgo: 28, activeMachine: false, reward: 0 },
-      // 5 Pending invites (clicked link, pending confirmation / email verification)
-      { id: 'ref_u21', name: 'guest_881', phone: '+256787992255', status: 'pending' as const, daysAgo: 1, activeMachine: false, reward: 0 },
-      { id: 'ref_u22', name: 'guest_902', phone: '+256700113366', status: 'pending' as const, daysAgo: 2, activeMachine: false, reward: 0 },
-      { id: 'ref_u23', name: 'guest_415', phone: '+256771224477', status: 'pending' as const, daysAgo: 3, activeMachine: false, reward: 0 },
-      { id: 'ref_u24', name: 'guest_623', phone: '+256753335588', status: 'pending' as const, daysAgo: 4, activeMachine: false, reward: 0 },
-      { id: 'ref_u25', name: 'guest_109', phone: '+256789446699', status: 'pending' as const, daysAgo: 5, activeMachine: false, reward: 0 }
-    ];
-
-    sampleReferralUsers.forEach((sr, idx) => {
-      const codeSuffix = sr.name.substring(0, 2).toUpperCase() + (idx + 10);
-      this.referrals.push({
-        id: `ref_rec_${sr.id}`,
-        referrerId: demoUserId,
-        referredUserId: sr.id,
-        maskedIdentifier: `FT****${codeSuffix}`,
-        fullUsername: sr.name,
-        phoneNumberMasked: maskPhone(sr.phone),
-        joinedAt: new Date(Date.now() - sr.daysAgo * 24 * 60 * 60 * 1000).toISOString(),
-        status: sr.status,
-        hasActiveMachine: sr.activeMachine,
-        rentalCount: sr.activeMachine ? 1 : 0,
-        rewardAmountUGX: sr.reward,
-        rewardStatus: sr.reward > 0 ? 'credited' : 'none'
-      });
-    });
-
-    // 6. Seed Recent Transactions
-    this.transactions = [
-      {
-        id: 'tx_001',
-        userId: demoUserId,
-        userName: demoUser.username,
-        type: 'deposit',
-        amountUGX: 150000,
-        method: 'MTN Mobile Money',
-        status: 'completed',
-        reference: 'FT-MM-982104',
-        description: 'Deposit via MTN MoMo (*165#)',
-        createdAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
-        accountDetails: '+256772123456 (MTN Uganda)'
-      },
-      {
-        id: 'tx_002',
-        userId: demoUserId,
-        userName: demoUser.username,
-        type: 'rental_payment',
-        amountUGX: 150000,
-        method: 'Wallet Balance',
-        status: 'completed',
-        reference: 'FT-RNT-GOLD-900',
-        description: 'Rental Payment: GOLD CPU (30 Days)',
-        createdAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString()
-      },
-      {
-        id: 'tx_003',
-        userId: demoUserId,
-        userName: demoUser.username,
-        type: 'deposit',
-        amountUGX: 60000,
-        method: 'Airtel Money',
-        status: 'completed',
-        reference: 'FT-AM-773412',
-        description: 'Deposit via Airtel Money (*185#)',
-        createdAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
-        accountDetails: '+256752123456 (Airtel Uganda)'
-      },
-      {
-        id: 'tx_004',
-        userId: demoUserId,
-        userName: demoUser.username,
-        type: 'rental_payment',
-        amountUGX: 60000,
-        method: 'Wallet Balance',
-        status: 'completed',
-        reference: 'FT-RNT-SILV-500',
-        description: 'Rental Payment: SILVER CPU (30 Days)',
-        createdAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString()
-      },
-      {
-        id: 'tx_005',
-        userId: demoUserId,
-        userName: demoUser.username,
-        type: 'machine_earnings',
-        amountUGX: 8333,
-        method: 'Machine Yield',
-        status: 'completed',
-        reference: 'FT-YIELD-AUTO-01',
-        description: 'Verified Computational Yield (Gold CPU)',
-        createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
-      },
-      {
-        id: 'tx_006',
-        userId: demoUserId,
-        userName: demoUser.username,
-        type: 'withdrawal',
-        amountUGX: 80000,
-        method: 'MTN Mobile Money',
-        status: 'completed',
-        reference: 'FT-WTH-554109',
-        description: 'Withdrawal to MTN MoMo +256772123456',
-        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-        accountDetails: '+256772123456 (Alex Futurist)'
-      },
-      {
-        id: 'tx_007',
-        userId: demoUserId,
-        userName: demoUser.username,
-        type: 'referral_bonus',
-        amountUGX: 7500,
-        method: 'Referral Incentive',
-        status: 'completed',
-        reference: 'FT-REF-COMM-01',
-        description: 'Referral Reward: New Gold CPU Rental by FT****DA10',
-        createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
-      }
-    ];
-
-    // 7. Seed Notifications
-    this.notifications = [
-      {
-        id: 'notif_001',
-        userId: demoUserId,
-        title: 'Compute Yield Accrued',
-        message: 'Your GOLD CPU Titan X-900 generated UGX 8,333 in computing rewards today.',
-        type: 'earnings',
-        read: false,
-        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
-      },
-      {
-        id: 'notif_002',
-        userId: demoUserId,
-        title: 'New Active Referral Registered',
-        message: 'A user joined via your special link and activated a SILVER CPU machine! Referral reward credited.',
-        type: 'referral',
-        read: false,
-        createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString()
-      },
-      {
-        id: 'notif_003',
-        userId: demoUserId,
-        title: 'Welcome to FUTURE TECH',
-        message: 'Your account is secured with 256-bit encryption. Share your Special Link to earn from technology.',
-        type: 'info',
-        read: true,
-        createdAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString()
-      }
-    ];
-
-    // Seed Initial Deposits
-    this.deposits = [
-      {
-        id: 'dep_002',
-        userId: demoUserId,
-        userName: 'alex_futurist',
-        userAccount: '+256772123456',
-        amountUGX: 150000,
-        tid: 'TID938172645',
-        paymentMethod: 'MTN Mobile Money',
-        status: 'PENDING',
-        createdAt: new Date(Date.now() - 45 * 60 * 1000).toISOString()
-      },
-      {
-        id: 'dep_003',
-        userId: 'ref_u01',
-        userName: 'david_k',
-        userAccount: '+256782112233',
-        amountUGX: 60000,
-        tid: 'TID771923011',
-        paymentMethod: 'Airtel Money',
-        status: 'PENDING',
-        createdAt: new Date(Date.now() - 25 * 60 * 1000).toISOString()
-      },
-      {
-        id: 'dep_001',
-        userId: demoUserId,
-        userName: 'alex_futurist',
-        userAccount: '+256772123456',
-        amountUGX: 100000,
-        tid: 'TID849201948',
-        paymentMethod: 'MTN Mobile Money',
-        status: 'APPROVED',
-        approvedBy: 'kabandaaiman',
-        approvedAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
-        createdAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000 - 600000).toISOString()
-      },
-      {
-        id: 'dep_004',
-        userId: 'ref_u05',
-        userName: 'paul_o',
-        userAccount: '+256788990011',
-        amountUGX: 30000,
-        tid: 'TID110022334',
-        paymentMethod: 'MTN Mobile Money',
-        status: 'REJECTED',
-        rejectionReason: 'TID not verified in telecom mobile money gateway statement',
-        adminNote: 'Confirmed payment not received on 0795829784',
-        approvedBy: 'kabandaaiman',
-        approvedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000 - 3600000).toISOString()
-      }
-    ];
-
-    // Seed Initial Machine Purchases
-    this.purchases = [
-      {
-        id: 'pur_001',
-        userId: demoUserId,
-        userName: 'alex_futurist',
-        userPhone: '+256772123456',
-        machineId: 'cpu-gold-900',
-        machineName: 'GOLD CPU — Quantum Titan X-900',
-        machineTier: 'gold',
-        priceUGX: 150000,
-        quantity: 1,
-        status: 'completed',
-        createdAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString()
-      },
-      {
-        id: 'pur_002',
-        userId: demoUserId,
-        userName: 'alex_futurist',
-        userPhone: '+256772123456',
-        machineId: 'cpu-silver-500',
-        machineName: 'SILVER CPU — Matrix Reactor S-500',
-        machineTier: 'silver',
-        priceUGX: 60000,
-        quantity: 1,
-        status: 'completed',
-        createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString()
-      },
-      {
-        id: 'pur_003',
-        userId: 'ref_u01',
-        userName: 'david_k',
-        userPhone: '+256782112233',
-        machineId: 'cpu-silver-500',
-        machineName: 'SILVER CPU — Matrix Reactor S-500',
-        machineTier: 'silver',
-        priceUGX: 60000,
-        quantity: 1,
-        status: 'completed',
-        createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
-      },
-      {
-        id: 'pur_004',
-        userId: 'ref_u03',
-        userName: 'grace_m',
-        userPhone: '+256779445566',
-        machineId: 'cpu-normal-200',
-        machineName: 'NORMAL CPU — Core Titanium N-200',
-        machineTier: 'normal',
-        priceUGX: 30000,
-        quantity: 1,
-        status: 'completed',
-        createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
-      }
-    ];
-
-    this.logAudit(adminId, 'kabandaaiman', 'SYSTEM_INITIALIZED', 'ADMIN', 'Future Tech server seeded with machines and initial nodes');
+    this.logAudit(adminId, 'kabandaaiman', 'SYSTEM_INITIALIZED', 'ADMIN', 'Future Tech server initialized for live production deployment.');
   }
 
   // Working Days & Schedule Verification
-  isDayActiveForTier(tier: MachineTier, dayOfWeek: number): boolean {
-    // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-    if (tier === 'normal') {
-      // Normal CPU: Monday to Friday (1..5). Weekends (0 and 6) off.
-      return dayOfWeek >= 1 && dayOfWeek <= 5;
+  // Universal rule: ALL machines do NOT work on Saturday (day 6) and Sunday (day 0)
+  isDayActiveForTier(tier?: MachineTier, dayOfWeek?: number, schedule?: string): boolean {
+    const day = dayOfWeek !== undefined ? dayOfWeek : new Date().getDay();
+    // 0 = Sunday, 6 = Saturday -> All machines are offline on Saturday and Sunday
+    if (day === 0 || day === 6) {
+      return false;
     }
-    if (tier === 'silver') {
-      // Silver CPU: Monday to Saturday (1..6). Sunday (0) off.
-      return dayOfWeek >= 1 && dayOfWeek <= 6;
-    }
-    // Gold CPU: Works every single day (0..6)
+    // Monday through Friday (1..5) are active working days
     return true;
   }
 
-  getTierScheduleInfo(tier: MachineTier) {
-    if (tier === 'normal') {
-      return {
-        workingDaysSchedule: 'Monday – Friday (5 Days / Week)',
-        workingDaysPerWeek: 5,
-        weekendStatus: 'Offline on Saturday & Sunday',
-        updateTime: 'Daily at 12:00 PM'
-      };
-    }
-    if (tier === 'silver') {
-      return {
-        workingDaysSchedule: '6 Days / Week (Mon – Sat)',
-        workingDaysPerWeek: 6,
-        weekendStatus: 'Active Saturday • Paused Sunday',
-        updateTime: 'Daily at 12:00 PM'
-      };
-    }
+  getTierScheduleInfo(tier?: MachineTier) {
     return {
-      workingDaysSchedule: 'Everyday (7 Days / Week)',
-      workingDaysPerWeek: 7,
-      weekendStatus: 'Active Every Day (Mon – Sun)',
-      updateTime: 'Daily at 12:00 PM'
+      workingDaysSchedule: 'Monday – Friday (5 Days / Week)',
+      workingDaysPerWeek: 5,
+      weekendStatus: 'Offline on Saturday & Sunday',
+      updateTime: 'Daily at 12:00 PM (Mon–Fri)'
     };
   }
 
@@ -683,14 +483,14 @@ class Database {
 
   enrichRental(rental: MachineRental): MachineRental {
     const currentDay = new Date().getDay();
-    const isWorkingToday = this.isDayActiveForTier(rental.machineTier, currentDay);
+    const isWorkingToday = this.isDayActiveForTier(rental.machineTier, currentDay, rental.workingDaysSchedule);
     const schedule = this.getTierScheduleInfo(rental.machineTier);
 
     return {
       ...rental,
-      workingDaysSchedule: schedule.workingDaysSchedule,
-      workingDaysPerWeek: schedule.workingDaysPerWeek,
-      weekendStatus: schedule.weekendStatus,
+      workingDaysSchedule: rental.workingDaysSchedule || schedule.workingDaysSchedule,
+      workingDaysPerWeek: rental.workingDaysPerWeek || schedule.workingDaysPerWeek,
+      weekendStatus: rental.weekendStatus || schedule.weekendStatus,
       isWorkingToday,
       nextUpdateAt: this.getNext12PM()
     };
@@ -707,7 +507,7 @@ class Database {
     const currentDay = new Date().getDay();
 
     rentalsToProcess.forEach(rental => {
-      const isEligibleToday = this.isDayActiveForTier(rental.machineTier, currentDay);
+      const isEligibleToday = this.isDayActiveForTier(rental.machineTier, currentDay, rental.workingDaysSchedule);
       
       const lastTick = new Date(rental.lastYieldTick).getTime();
       const elapsedMs = Math.max(0, now - lastTick);
@@ -741,7 +541,7 @@ class Database {
     let totalDistributedUGX = 0;
 
     activeRentals.forEach(rental => {
-      const isWorking = this.isDayActiveForTier(rental.machineTier, currentDay);
+      const isWorking = this.isDayActiveForTier(rental.machineTier, currentDay, rental.workingDaysSchedule);
       if (isWorking) {
         const yieldAmount = rental.dailyEstimatedYieldUGX;
         rental.accumulatedEarningsUGX += yieldAmount;
@@ -1245,7 +1045,7 @@ app.post('/api/rentals/rent', authenticateUser, (req, res) => {
       workingDaysSchedule: sched.workingDaysSchedule,
       workingDaysPerWeek: sched.workingDaysPerWeek,
       weekendStatus: sched.weekendStatus,
-      isWorkingToday: db.isDayActiveForTier(machine.tier, new Date().getDay()),
+      isWorkingToday: db.isDayActiveForTier(machine.tier, new Date().getDay(), sched.workingDaysSchedule),
       nextUpdateAt: '12:00 PM'
     };
 
@@ -1677,7 +1477,7 @@ app.post('/api/machines/purchase', authenticateUser, (req, res) => {
         workingDaysSchedule: sched.workingDaysSchedule,
         workingDaysPerWeek: sched.workingDaysPerWeek,
         weekendStatus: sched.weekendStatus,
-        isWorkingToday: db.isDayActiveForTier(machine.tier, new Date().getDay()),
+        isWorkingToday: db.isDayActiveForTier(machine.tier, new Date().getDay(), sched.workingDaysSchedule),
         nextUpdateAt: '12:00 PM'
       };
       db.rentals.unshift(rental);
@@ -1775,25 +1575,26 @@ app.post('/api/wallet/withdraw', authenticateUser, (req, res) => {
       return res.status(400).json({ error: 'Minimum withdrawal amount is UGX 20,000.' });
     }
 
-    // 2% processing and carrier fee
-    const fee = Math.round(amount * 0.02);
-    const totalDeduction = amount + fee;
-
-    if (user.walletBalanceUGX < totalDeduction) {
+    if (user.walletBalanceUGX < amount) {
       return res.status(400).json({
-        error: `Insufficient available balance. You requested UGX ${amount.toLocaleString()} + UGX ${fee.toLocaleString()} fee (Total: UGX ${totalDeduction.toLocaleString()}), but your balance is UGX ${user.walletBalanceUGX.toLocaleString()}.`
+        error: `Insufficient available balance. You requested UGX ${amount.toLocaleString()}, but your available balance is UGX ${user.walletBalanceUGX.toLocaleString()}.`
       });
     }
+
+    // Deduct 15% of the withdrawal amount requested
+    const feePercent = db.settings.withdrawalFeePercent || 15;
+    const fee = Math.round(amount * (feePercent / 100));
+    const netAmount = amount - fee; // Net amount user receives in their mobile money account
 
     if (!paymentMethod) {
       return res.status(400).json({ error: 'Payment method is required.' });
     }
 
-    if ((paymentMethod.includes('MTN') || paymentMethod.includes('Airtel')) && !recipientPhone) {
+    if ((paymentMethod.includes('MTN') || paymentMethod.includes('Airtel') || paymentMethod.includes('mobile_money')) && !recipientPhone) {
       return res.status(400).json({ error: 'Registered mobile money phone number is required.' });
     }
 
-    user.walletBalanceUGX -= totalDeduction;
+    user.walletBalanceUGX -= amount;
     user.totalWithdrawnUGX += amount;
 
     const reference = `FT-WTH-${Math.floor(100000 + Math.random() * 900000)}`;
@@ -1805,11 +1606,11 @@ app.post('/api/wallet/withdraw', authenticateUser, (req, res) => {
       type: 'withdrawal',
       amountUGX: amount,
       method: paymentMethod,
-      status: 'completed', // instant verified processing
+      status: 'completed', // instant verified telecom payout
       reference,
-      description: `Withdrawal to ${paymentMethod} (${recipientPhone || recipientAccount})`,
+      description: `Withdrawal to ${paymentMethod} (${recipientPhone || recipientAccount}) [15% Fee: UGX ${fee.toLocaleString()} • Net Dispatched: UGX ${netAmount.toLocaleString()}]`,
       createdAt: new Date().toISOString(),
-      accountDetails: recipientPhone ? `${recipientPhone} (${recipientName || 'Holder'})` : `${recipientBank} - ${recipientAccount} (${recipientName})`
+      accountDetails: recipientPhone ? `${recipientPhone} (${recipientName || 'Account Holder'})` : `${recipientBank} - ${recipientAccount} (${recipientName})`
     };
 
     db.transactions.unshift(newTx);
@@ -1817,20 +1618,21 @@ app.post('/api/wallet/withdraw', authenticateUser, (req, res) => {
     db.addNotification(
       user.id,
       'Withdrawal Processed Successfully',
-      `UGX ${amount.toLocaleString()} has been sent to your ${paymentMethod} account (${recipientPhone || recipientAccount}).`,
+      `Withdrawal of UGX ${amount.toLocaleString()} processed! UGX ${netAmount.toLocaleString()} (after 15% deduction: UGX ${fee.toLocaleString()}) has been dispatched to your ${paymentMethod} account (${recipientPhone || recipientAccount}).`,
       'info'
     );
 
-    db.logAudit(user.id, user.username, 'WITHDRAWAL_PROCESSED', 'WALLET', `Withdrew UGX ${amount.toLocaleString()} via ${paymentMethod}`);
+    db.logAudit(user.id, user.username, 'WITHDRAWAL_PROCESSED', 'WALLET', `Withdrew UGX ${amount.toLocaleString()} (Net: UGX ${netAmount.toLocaleString()} after 15% fee) via ${paymentMethod}`);
 
     res.json({
       success: true,
       reference,
       amountUGX: amount,
       feeUGX: fee,
-      netAmountUGX: amount,
+      feePercent,
+      netAmountUGX: netAmount,
       walletBalanceUGX: user.walletBalanceUGX,
-      message: 'Withdrawal processed and dispatched to your recipient account.'
+      message: `Withdrawal of UGX ${amount.toLocaleString()} processed! UGX ${netAmount.toLocaleString()} (after 15% deduction) dispatched to your recipient account.`
     });
   } catch (err: any) {
     console.error('Withdrawal error:', err);
@@ -1889,12 +1691,17 @@ app.post('/api/ai/chat', async (req, res) => {
       try {
         const ai = new GoogleGenAI({ apiKey });
         const systemPrompt = `You are FUTURE TECH AI Core, the technical computing and node intelligence assistant for the FUTURE TECH computing machine rental platform.
+About the company:
+- FUTURE TECH is a premier high-technology enterprise originating in China, recognized globally for advanced computing cluster architecture and tensor matrix infrastructure.
+- FUTURE TECH has officially opened its official new branch in Uganda, operating under a landmark 20-year government contract with the Republic of Uganda to pioneer cloud computing machine rentals, technological empowerment, and daily earnings.
+
 You assist users with:
-1. Understanding the three computing tiers: GOLD CPU (Quantum Titan X-900 @ 480 TH/s), SILVER CPU (Matrix Reactor S-500 @ 180 TH/s), and NORMAL CPU (Core Titanium N-200 @ 65 TH/s).
-2. Calculating estimated computational yields and rental ROI clearly marked as estimates.
-3. Explaining Uganda payment options: MTN Mobile Money (*165#), Airtel Money (*185#), and Bank Cards.
-4. Explaining the Special Referral Link program (FT- codes) and commission system.
-5. Node hardware telemetry, uptime standards, and cloud matrix acceleration.
+1. Explaining the 20-year Uganda Government contract and China-Uganda technological partnership.
+2. Understanding the computing tiers: GOLD CPU, SILVER CPU, and NORMAL CPU with their respective TH/s power and daily estimated yields.
+3. Calculating estimated computational yields and rental ROI clearly marked as estimates.
+4. Explaining Uganda payment options: MTN Mobile Money (*165#), Airtel Money (*185#), and Bank Cards in UGX.
+5. Explaining the Special Referral Link program (FT- codes) and 5% commission system.
+6. Node hardware telemetry, uptime standards, and cloud matrix acceleration.
 
 Be concise, futuristic, confident, transparent, and helpful. Use high-tech formatting.`;
 
@@ -2473,10 +2280,10 @@ app.post('/api/admin/machines/create', authenticateUser, requireAdmin, (req, res
       algorithm: 'Adaptive AI Compute'
     },
     terms: machineData.terms || ['Verified computing network output', 'Accrues daily yields in real-time'],
-    workingDaysSchedule: machineData.workingDaysSchedule || (machineData.tier === 'gold' ? 'Everyday (7 Days / Week)' : machineData.tier === 'silver' ? '6 Days / Week (Mon – Sat)' : 'Monday – Friday (5 Days / Week)'),
-    workingDaysPerWeek: machineData.workingDaysPerWeek || (machineData.tier === 'gold' ? 7 : machineData.tier === 'silver' ? 6 : 5),
-    weekendStatus: machineData.weekendStatus || (machineData.tier === 'gold' ? 'Active Sat & Sun' : machineData.tier === 'silver' ? 'Active Sat • Paused Sun' : 'Offline Sat & Sun'),
-    updateTime: 'Daily at 12:00 PM',
+    workingDaysSchedule: machineData.workingDaysSchedule || 'Monday – Friday (5 Days / Week)',
+    workingDaysPerWeek: machineData.workingDaysPerWeek || 5,
+    weekendStatus: machineData.weekendStatus || 'Offline on Saturday & Sunday',
+    updateTime: machineData.updateTime || 'Daily at 12:00 PM (Mon–Fri)',
     isAvailable: true
   };
 
@@ -2544,10 +2351,10 @@ app.post('/api/admin/machines', authenticateUser, requireAdmin, (req, res) => {
       algorithm: 'Adaptive AI Compute'
     },
     terms: machineData.terms || ['Verified computing network output', 'Accrues daily yields in real-time'],
-    workingDaysSchedule: machineData.workingDaysSchedule || (machineData.tier === 'gold' ? 'Everyday (7 Days / Week)' : machineData.tier === 'silver' ? '6 Days / Week (Mon – Sat)' : 'Monday – Friday (5 Days / Week)'),
-    workingDaysPerWeek: machineData.workingDaysPerWeek || (machineData.tier === 'gold' ? 7 : machineData.tier === 'silver' ? 6 : 5),
-    weekendStatus: machineData.weekendStatus || (machineData.tier === 'gold' ? 'Active Sat & Sun' : machineData.tier === 'silver' ? 'Active Sat • Paused Sun' : 'Offline Sat & Sun'),
-    updateTime: 'Daily at 12:00 PM',
+    workingDaysSchedule: machineData.workingDaysSchedule || 'Monday – Friday (5 Days / Week)',
+    workingDaysPerWeek: machineData.workingDaysPerWeek || 5,
+    weekendStatus: machineData.weekendStatus || 'Offline on Saturday & Sunday',
+    updateTime: machineData.updateTime || 'Daily at 12:00 PM (Mon–Fri)',
     isAvailable: true
   };
 

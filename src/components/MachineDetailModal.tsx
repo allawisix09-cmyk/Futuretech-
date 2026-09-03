@@ -173,17 +173,17 @@ export const MachineDetailModal: React.FC<MachineDetailModalProps> = ({
               <div className="rounded-2xl bg-[#050a14] border border-slate-800 p-3.5 space-y-2 text-xs font-mono">
                 <div className="flex justify-between py-1 border-b border-slate-900">
                   <span className="text-slate-500">Working Days Schedule:</span>
-                  <span className={isGold ? 'text-amber-400 font-bold' : isSilver ? 'text-cyan-400 font-bold' : 'text-blue-400 font-bold'}>
-                    {machine.workingDaysSchedule || (isGold ? 'Everyday (7 Days/Week)' : isSilver ? '6 Days/Week (Mon–Sat)' : 'Monday – Friday (5 Days/Week)')}
+                  <span className="text-cyan-400 font-bold">
+                    {machine.workingDaysSchedule || 'Monday – Friday (5 Days/Week)'}
                   </span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-slate-900">
                   <span className="text-slate-500">Weekend Status:</span>
-                  <span className="text-slate-200 font-semibold">{machine.weekendStatus || (isGold ? 'Active Sat & Sun' : isSilver ? 'Active Sat • Paused Sun' : 'Offline Sat & Sun')}</span>
+                  <span className="text-amber-300 font-semibold">{machine.weekendStatus || 'Offline on Saturday & Sunday'}</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-slate-900">
                   <span className="text-slate-500">Daily Payout Milestone:</span>
-                  <span className="text-emerald-400 font-semibold">Automatic at 12:00 PM</span>
+                  <span className="text-emerald-400 font-semibold">Automatic at 12:00 PM (Mon–Fri)</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-slate-900">
                   <span className="text-slate-500">Processor Cores:</span>

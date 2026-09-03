@@ -23,7 +23,6 @@ interface EarningsDashboardProps {
   onClaimAll: () => Promise<void>;
   onClaimSingle: (rentalId: string) => Promise<void>;
   onOpenAuth?: () => void;
-  onQuickDemoLogin?: () => void;
 }
 
 export const EarningsDashboard: React.FC<EarningsDashboardProps> = ({
@@ -32,73 +31,18 @@ export const EarningsDashboard: React.FC<EarningsDashboardProps> = ({
   earningsSummary,
   onClaimAll,
   onClaimSingle,
-  onOpenAuth,
-  onQuickDemoLogin
+  onOpenAuth
 }) => {
   const [claiming, setClaiming] = useState(false);
   const [claimSuccess, setClaimSuccess] = useState<string | null>(null);
   const [claimError, setClaimError] = useState<string | null>(null);
 
-  // Demo fallback data if user is a guest
-  const demoRentals: MachineRental[] = [
-    {
-      id: 'demo-rent-01',
-      userId: 'guest',
-      machineId: 'cpu-titan-x900',
-      machineName: 'Quantum Titan X-900',
-      machineTier: 'gold',
-      computingPower: '480 TH/s',
-      hashRate: 480,
-      rentalPriceUGX: 450000,
-      dailyEstimatedYieldUGX: 31500,
-      accumulatedEarningsUGX: 157500,
-      claimedEarningsUGX: 126000,
-      unclaimedEarningsUGX: 31500,
-      durationDays: 30,
-      workingDaysSchedule: 'Everyday (7 Days / Week)',
-      workingDaysPerWeek: 7,
-      weekendStatus: 'Active Every Day',
-      isWorkingToday: true,
-      nextUpdateAt: new Date(Date.now() + 4 * 3600000).toISOString(),
-      startDate: new Date(Date.now() - 5 * 86400000).toISOString(),
-      endDate: new Date(Date.now() + 25 * 86400000).toISOString(),
-      status: 'active',
-      lastYieldTick: new Date(Date.now() - 3600000).toISOString()
-    },
-    {
-      id: 'demo-rent-02',
-      userId: 'guest',
-      machineId: 'cpu-matrix-s500',
-      machineName: 'Matrix Reactor S-500',
-      machineTier: 'silver',
-      computingPower: '180 TH/s',
-      hashRate: 180,
-      rentalPriceUGX: 150000,
-      dailyEstimatedYieldUGX: 9000,
-      accumulatedEarningsUGX: 27000,
-      claimedEarningsUGX: 18000,
-      unclaimedEarningsUGX: 9000,
-      durationDays: 30,
-      workingDaysSchedule: '6 Days / Week (Mon – Sat)',
-      workingDaysPerWeek: 6,
-      weekendStatus: 'Off on Sunday',
-      isWorkingToday: true,
-      nextUpdateAt: new Date(Date.now() + 4 * 3600000).toISOString(),
-      startDate: new Date(Date.now() - 3 * 86400000).toISOString(),
-      endDate: new Date(Date.now() + 27 * 86400000).toISOString(),
-      status: 'active',
-      lastYieldTick: new Date(Date.now() - 3600000).toISOString()
-    }
-  ];
-
-  const effectiveRentals = user ? myRentals : demoRentals;
-  const activeRentals = effectiveRentals.filter(r => r.status === 'active');
-  const totalUnclaimed = activeRentals.reduce((sum, r) => sum + r.unclaimedEarningsUGX, 0);
+  const activeRentals = (myRentals || []).filter(r => r.status === 'active');
+  const totalUnclaimed = activeRentals.reduce((sum, r) => sum + (r.unclaimedEarningsUGX || 0), 0);
 
   const handleClaimAll = async () => {
     if (!user) {
-      if (onQuickDemoLogin) onQuickDemoLogin();
-      else if (onOpenAuth) onOpenAuth();
+      if (onOpenAuth) onOpenAuth();
       return;
     }
     if (totalUnclaimed <= 0) return;
@@ -125,8 +69,7 @@ export const EarningsDashboard: React.FC<EarningsDashboardProps> = ({
 
   const handleClaimSingle = async (rentalId: string, amount: number) => {
     if (!user) {
-      if (onQuickDemoLogin) onQuickDemoLogin();
-      else if (onOpenAuth) onOpenAuth();
+      if (onOpenAuth) onOpenAuth();
       return;
     }
     if (amount <= 0) return;
@@ -141,7 +84,7 @@ export const EarningsDashboard: React.FC<EarningsDashboardProps> = ({
           origin: { y: 0.6 }
         });
       } catch (e) {}
-      setClaimSuccess(`Successfully claimed UGX ${(amount ?? 0).toLocaleString()}.`);
+      setClaimSuccess(`Claimed UGX ${(amount ?? 0).toLocaleString()} to your wallet balance.`);
       setTimeout(() => setClaimSuccess(null), 4000);
     } catch (err: any) {
       setClaimError(err.message || 'Claim failed. Please try again.');
@@ -172,58 +115,23 @@ export const EarningsDashboard: React.FC<EarningsDashboardProps> = ({
         {/* Big Claim All Action */}
         <div className="w-full md:w-auto p-5 rounded-2xl bg-[#040813] border border-cyan-500/40 text-center md:text-right space-y-2">
           <span className="text-[10px] font-mono uppercase text-slate-400 block">
-            {user ? 'Unclaimed Accrued Yields' : 'Sample Accrued Yields (Demo)'}
+            Unclaimed Accrued Yields
           </span>
           <div className="text-2xl font-orbitron font-black text-amber-400">
             UGX {(totalUnclaimed ?? 0).toLocaleString()}
           </div>
           <button
             onClick={handleClaimAll}
-            disabled={claiming || (user && totalUnclaimed <= 0)}
+            disabled={claiming || totalUnclaimed <= 0}
             className="w-full px-6 py-2.5 rounded-xl font-orbitron font-bold text-xs uppercase tracking-wider text-black bg-gradient-to-r from-amber-400 to-yellow-300 hover:from-amber-300 hover:to-yellow-200 disabled:opacity-40 transition shadow-[0_0_15px_rgba(245,180,27,0.3)] flex items-center justify-center gap-2"
           >
             <Zap className="w-4 h-4" />
             <span>
-              {claiming
-                ? 'Streaming to Wallet...'
-                : user
-                ? 'Claim All to Wallet'
-                : 'Launch Demo to Claim'}
+              {claiming ? 'Streaming to Wallet...' : 'Claim All to Wallet'}
             </span>
           </button>
         </div>
       </div>
-
-      {/* Guest Mode Banner */}
-      {!user && (
-        <div className="p-4 rounded-2xl bg-cyan-950/60 border border-cyan-500/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs font-mono text-cyan-200">
-          <div className="flex items-center gap-2.5">
-            <Sparkles className="w-5 h-5 text-amber-400 shrink-0" />
-            <div>
-              <strong className="text-white font-orbitron text-xs block">Viewing Live Yield Telemetry in Guest Mode</strong>
-              <span className="text-cyan-300/80 text-[11px]">Experience how yields stream in real time. Launch the pre-funded demo account or register to start accumulating.</span>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            {onQuickDemoLogin && (
-              <button
-                onClick={onQuickDemoLogin}
-                className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-orbitron font-bold text-xs uppercase transition shadow-[0_0_12px_rgba(0,210,255,0.4)]"
-              >
-                Launch Demo Investor
-              </button>
-            )}
-            {onOpenAuth && (
-              <button
-                onClick={onOpenAuth}
-                className="px-3 py-2 rounded-xl bg-[#09152b] border border-cyan-400/50 text-cyan-300 hover:text-white font-mono text-xs transition"
-              >
-                Sign In
-              </button>
-            )}
-          </div>
-        </div>
-      )}
 
       {claimSuccess && (
         <div className="p-4 rounded-2xl bg-emerald-950/70 border border-emerald-500/60 flex items-center gap-3 text-xs text-emerald-200 animate-pulse">
@@ -244,7 +152,7 @@ export const EarningsDashboard: React.FC<EarningsDashboardProps> = ({
         <div className="p-5 rounded-2xl bg-[#091224] border border-cyan-500/30">
           <span className="text-[10px] font-mono text-slate-400 uppercase">Today's Output</span>
           <div className="text-xl sm:text-2xl font-orbitron font-black text-cyan-300 mt-1">
-            UGX {(user ? user.todayEarningsUGX ?? 0 : 40500).toLocaleString()}
+            UGX {(user?.todayEarningsUGX ?? 0).toLocaleString()}
           </div>
           <p className="text-[10px] font-mono text-slate-500 mt-1">Calculated 24h cycle</p>
         </div>
@@ -252,7 +160,7 @@ export const EarningsDashboard: React.FC<EarningsDashboardProps> = ({
         <div className="p-5 rounded-2xl bg-[#091224] border border-blue-500/30">
           <span className="text-[10px] font-mono text-slate-400 uppercase">7-Day Projected</span>
           <div className="text-xl sm:text-2xl font-orbitron font-black text-blue-300 mt-1">
-            UGX {((user ? user.todayEarningsUGX ?? 0 : 40500) * 7).toLocaleString()}
+            UGX {((user?.todayEarningsUGX ?? 0) * 7).toLocaleString()}
           </div>
           <p className="text-[10px] font-mono text-slate-500 mt-1">Based on active clusters</p>
         </div>
@@ -260,7 +168,7 @@ export const EarningsDashboard: React.FC<EarningsDashboardProps> = ({
         <div className="p-5 rounded-2xl bg-[#091224] border border-purple-500/30">
           <span className="text-[10px] font-mono text-slate-400 uppercase">30-Day Monthly Projected</span>
           <div className="text-xl sm:text-2xl font-orbitron font-black text-purple-300 mt-1">
-            UGX {((user ? user.todayEarningsUGX ?? 0 : 40500) * 30).toLocaleString()}
+            UGX {((user?.todayEarningsUGX ?? 0) * 30).toLocaleString()}
           </div>
           <p className="text-[10px] font-mono text-slate-500 mt-1">Full 30-day lease term</p>
         </div>
@@ -268,7 +176,7 @@ export const EarningsDashboard: React.FC<EarningsDashboardProps> = ({
         <div className="p-5 rounded-2xl bg-[#091224] border border-emerald-500/30">
           <span className="text-[10px] font-mono text-slate-400 uppercase">Lifetime Earned</span>
           <div className="text-xl sm:text-2xl font-orbitron font-black text-emerald-400 mt-1">
-            UGX {(user ? user.totalEarningsUGX ?? 0 : 312500).toLocaleString()}
+            UGX {(user?.totalEarningsUGX ?? 0).toLocaleString()}
           </div>
           <p className="text-[10px] font-mono text-slate-500 mt-1">Total claimed yields</p>
         </div>
@@ -304,12 +212,12 @@ export const EarningsDashboard: React.FC<EarningsDashboardProps> = ({
                           ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/40'
                           : 'bg-amber-950/80 text-amber-300 border border-amber-500/40'
                       }`}>
-                        {rental.isWorkingToday !== false ? '● Active Today (12 PM Update)' : '⏸ Weekend / Off Schedule'}
+                        {rental.isWorkingToday !== false ? '● Active Today (12 PM Update)' : '⏸ Weekend Pause (Sat & Sun Off)'}
                       </span>
                     </div>
 
                     <p className="text-[11px] font-mono text-cyan-400 mt-0.5">
-                      Schedule: <strong className="text-white">{rental.workingDaysSchedule || (rental.machineTier === 'gold' ? 'Everyday' : rental.machineTier === 'silver' ? '6 Days/Wk' : 'Mon–Fri')}</strong> • Output: UGX {(rental.dailyEstimatedYieldUGX ?? 0).toLocaleString()}/day
+                      Schedule: <strong className="text-white">{rental.workingDaysSchedule || 'Monday – Friday (5 Days / Wk)'}</strong> • Output: UGX {(rental.dailyEstimatedYieldUGX ?? 0).toLocaleString()}/day
                     </p>
 
                     <div className="flex items-center gap-3 text-[10px] font-mono text-slate-400 mt-1 flex-wrap">

@@ -59,10 +59,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           
           {/* Official F Logo Hero Badge */}
-          <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-[#081224]/80 border border-cyan-500/40 shadow-[0_0_20px_rgba(0,210,255,0.25)] mb-8">
+          <div className="inline-flex flex-wrap items-center justify-center gap-2.5 px-4 py-2 rounded-full bg-[#081224]/90 border border-cyan-500/50 shadow-[0_0_25px_rgba(0,210,255,0.3)] mb-8">
             <FutureTechLogo size="sm" showText={false} />
             <span className="text-xs font-mono font-semibold tracking-wider text-cyan-300 uppercase">
-              Official Future Tech Computing Network
+              FUTURE TECH — Official China & Uganda Enterprise
+            </span>
+            <span className="px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-500/50 text-emerald-300 font-mono text-[10px] font-bold">
+              20-Year Uganda Govt Contract
             </span>
             <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
           </div>
@@ -76,9 +79,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           </h1>
 
           {/* Description */}
-          <p className="mt-6 text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed font-normal">
-            Access and rent enterprise-grade quantum computing nodes with guaranteed 99.9% uptime. 
-            Earn verifiable daily returns, track live telemetry, and unlock passive rewards with your unique referral link.
+          <p className="mt-6 text-slate-300 text-base sm:text-lg max-w-3xl mx-auto leading-relaxed font-normal">
+            Future Tech, a leading technology enterprise from China, has officially established its new branch in Uganda backed by a prestigious <strong className="text-cyan-300 font-semibold">20-year contract with the Ugandan Government</strong>. Rent enterprise-grade quantum computing nodes, enjoy real-time daily returns in Uganda Shillings (UGX), and earn instant payouts through MTN and Airtel Mobile Money.
           </p>
 
           {/* Primary Action Buttons */}
@@ -145,11 +147,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               Rent Next-Gen Computing Hardware
             </h2>
             <p className="text-slate-400 text-sm sm:text-base mt-3">
-              Choose from our three high-yield computing hardware tiers. Each machine is backed by real dedicated server infrastructure.
+              Choose from our high-yield computing hardware machines. Each machine is backed by real dedicated server infrastructure.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {machines.map(machine => {
               const isGold = machine.tier === 'gold';
               const isSilver = machine.tier === 'silver';
@@ -162,12 +164,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               return (
                 <div
                   key={machine.id}
-                  id={`machine-card-${machine.tier}`}
+                  id={`machine-card-${machine.id}`}
                   className={`rounded-2xl bg-[#091224] p-6 flex flex-col justify-between transition-all duration-300 hover:scale-[1.02] ${borderClass} relative`}
                 >
-                  {isGold && (
-                    <span className="absolute -top-3 right-6 px-3 py-1 rounded-full bg-amber-400 text-black text-[10px] font-orbitron font-extrabold uppercase shadow-[0_0_10px_#f59e0b]">
-                      Most Popular
+                  {machine.badge && (
+                    <span className={`absolute -top-3 right-6 px-3 py-1 rounded-full text-[10px] font-orbitron font-extrabold uppercase shadow-md ${
+                      isGold ? 'bg-amber-400 text-black shadow-[0_0_10px_#f59e0b]' : isSilver ? 'bg-cyan-300 text-black' : 'bg-blue-600 text-white'
+                    }`}>
+                      {machine.badge}
                     </span>
                   )}
 
@@ -194,8 +198,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                     <div className="mt-6 space-y-2 py-3 border-y border-slate-800/80 text-xs font-mono">
                       <div className="flex justify-between text-slate-300">
                         <span className="text-slate-500">Working Days:</span>
-                        <strong className={isGold ? 'text-amber-300' : isSilver ? 'text-cyan-300' : 'text-blue-300'}>
-                          {machine.workingDaysSchedule || (isGold ? 'Everyday (7 Days/Wk)' : isSilver ? '6 Days/Wk (Mon–Sat)' : '5 Days/Wk (Mon–Fri)')}
+                        <strong className="text-cyan-300">
+                          {machine.workingDaysSchedule || 'Monday – Friday (5 Days / Wk)'}
+                        </strong>
+                      </div>
+                      <div className="flex justify-between text-slate-300">
+                        <span className="text-slate-500">Weekend Mode:</span>
+                        <strong className="text-amber-300">
+                          {machine.weekendStatus || 'Offline on Saturday & Sunday'}
                         </strong>
                       </div>
                       <div className="flex justify-between text-slate-300">
@@ -228,7 +238,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                     </div>
 
                     <button
-                      id={`rent-btn-${machine.tier}`}
+                      id={`rent-btn-${machine.id}`}
                       onClick={() => onSelectMachine(machine)}
                       className={`w-full py-3 rounded-xl font-orbitron font-bold text-xs uppercase tracking-wider transition shadow-lg ${
                         isGold
@@ -238,7 +248,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                           : 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-500 hover:to-cyan-400 shadow-[0_0_20px_rgba(0,180,255,0.3)]'
                       }`}
                     >
-                      Rent {machine.tier.toUpperCase()} CPU →
+                      Rent {machine.name} →
                     </button>
                   </div>
                 </div>
@@ -348,7 +358,63 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         </div>
       </section>
 
-      {/* 4. Feature Highlights: Computing Power, Dashboard, Payments & Referrals */}
+      {/* 4. China-Uganda Bilateral 20-Year Strategic Agreement Section */}
+      <section className="py-16 bg-gradient-to-b from-[#060c1c] via-[#081530] to-[#060b18] border-t border-cyan-500/30 relative overflow-hidden">
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 text-xs font-mono font-bold mb-3 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <span>OFFICIAL 20-YEAR UGANDAN GOVERNMENT CONTRACT</span>
+            </div>
+            <h2 className="text-2xl sm:text-4xl font-orbitron font-black text-white">
+              China High-Tech Enterprise <br className="hidden sm:inline" />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-emerald-300 to-amber-300">
+                Official Uganda Branch Launch
+              </span>
+            </h2>
+            <p className="text-slate-300 text-sm sm:text-base mt-3 leading-relaxed">
+              Future Tech, a premier computing and artificial intelligence corporation from China, has officially established its new regional branch in Uganda. Under an exclusive 20-year bilateral agreement and contract with the Government of Uganda, Future Tech operates dedicated high-throughput compute clusters that enable every Ugandan citizen to earn daily yields in UGX.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="p-6 rounded-2xl bg-[#081224]/90 border border-cyan-500/30 shadow-lg relative overflow-hidden">
+              <div className="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-300 font-bold mb-4 font-mono text-base">
+                🇨🇳
+              </div>
+              <h3 className="font-orbitron font-bold text-base text-white">China Innovation Core</h3>
+              <p className="text-xs text-slate-300 font-mono mt-2 leading-relaxed">
+                Powered by Future Tech China's proprietary quantum-matrix microarchitectures, cryogenic servers, and high-density computing clusters engineered for 99.98% uninterrupted uptime.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-2xl bg-[#081224]/90 border border-emerald-500/40 shadow-[0_0_20px_rgba(16,185,129,0.15)] relative overflow-hidden">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-300 font-bold mb-4 font-mono text-base">
+                🇺🇬
+              </div>
+              <h3 className="font-orbitron font-bold text-base text-white">20-Year Uganda Govt Contract</h3>
+              <p className="text-xs text-slate-300 font-mono mt-2 leading-relaxed">
+                Legally ratified 20-year operational contract with the Ugandan Government, ensuring long-term institutional stability, regulatory compliance, and sustained economic empowerment across East Africa.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-2xl bg-[#081224]/90 border border-amber-500/30 shadow-lg relative overflow-hidden">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-300 font-bold mb-4 font-mono text-base">
+                ⚡
+              </div>
+              <h3 className="font-orbitron font-bold text-base text-white">Instant UGX MoMo Payouts</h3>
+              <p className="text-xs text-slate-300 font-mono mt-2 leading-relaxed">
+                Direct integration with MTN Mobile Money (*165#) and Airtel Money (*185#). Claim and withdraw your computing machine returns with transparent telecom verification and an automatic 15% platform deduction.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. Feature Highlights: Computing Power, Dashboard, Payments & Referrals */}
       <section className="py-20 bg-[#060b18] border-t border-cyan-900/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
@@ -398,7 +464,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 Uganda Mobile Money
               </h3>
               <p className="text-xs sm:text-sm text-slate-400 mt-2 leading-relaxed">
-                Seamless deposits and withdrawals via MTN Mobile Money (*165#) and Airtel Money (*185#). Instant telecom settlement with zero hidden fees.
+                Seamless deposits and withdrawals via MTN Mobile Money (*165#) and Airtel Money (*185#). Instant telecom settlement with clear 15% platform and carrier processing breakdown.
               </p>
             </div>
 

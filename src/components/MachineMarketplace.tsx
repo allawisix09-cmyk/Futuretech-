@@ -32,7 +32,9 @@ export const MachineMarketplace: React.FC<MachineMarketplaceProps> = ({
   const filteredMachines = machines.filter(m => {
     const matchesFilter = selectedFilter === 'all' || m.tier === selectedFilter;
     const matchesSearch = m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          m.computingPower.toLowerCase().includes(searchQuery.toLowerCase());
+                          m.computingPower.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          (m.tagline && m.tagline.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                          (m.description && m.description.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesFilter && matchesSearch;
   });
 
@@ -77,7 +79,7 @@ export const MachineMarketplace: React.FC<MachineMarketplaceProps> = ({
             <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
             <input
               type="text"
-              placeholder="Search specs, hashrate..."
+              placeholder="Search specs, series, hashrate..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2 rounded-xl bg-[#050a14] border border-slate-700 focus:border-cyan-400 text-white text-xs font-mono focus:outline-none"
@@ -88,7 +90,7 @@ export const MachineMarketplace: React.FC<MachineMarketplaceProps> = ({
       </div>
 
       {/* Hardware Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
         {filteredMachines.map(machine => {
           const isGold = machine.tier === 'gold';
           const isSilver = machine.tier === 'silver';
@@ -103,8 +105,10 @@ export const MachineMarketplace: React.FC<MachineMarketplaceProps> = ({
               key={machine.id}
               className={`rounded-3xl bg-[#091224] p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 hover:scale-[1.02] ${borderClass} relative shadow-xl`}
             >
-              {isGold && (
-                <span className="absolute -top-3 right-6 px-3 py-1 rounded-full bg-amber-400 text-black text-[10px] font-orbitron font-extrabold uppercase shadow-[0_0_10px_#f59e0b]">
+              {machine.badge && (
+                <span className={`absolute -top-3 right-6 px-3 py-1 rounded-full text-[10px] font-orbitron font-extrabold uppercase shadow-md ${
+                  isGold ? 'bg-amber-400 text-black shadow-[0_0_10px_#f59e0b]' : isSilver ? 'bg-cyan-300 text-black' : 'bg-blue-600 text-white'
+                }`}>
                   {machine.badge}
                 </span>
               )}
@@ -132,14 +136,14 @@ export const MachineMarketplace: React.FC<MachineMarketplaceProps> = ({
                 <div className="mt-6 space-y-2 py-3 border-y border-slate-800 font-mono text-xs">
                   <div className="flex justify-between text-slate-300">
                     <span className="text-slate-500">Working Schedule:</span>
-                    <strong className={isGold ? 'text-amber-300' : isSilver ? 'text-cyan-300' : 'text-blue-300'}>
-                      {machine.workingDaysSchedule || (isGold ? '7 Days/Wk (Everyday)' : isSilver ? '6 Days/Wk (Mon–Sat)' : '5 Days/Wk (Mon–Fri)')}
+                    <strong className="text-cyan-300">
+                      {machine.workingDaysSchedule || 'Monday – Friday (5 Days / Week)'}
                     </strong>
                   </div>
                   <div className="flex justify-between text-slate-300">
                     <span className="text-slate-500">Weekend Mode:</span>
-                    <strong className="text-slate-200">
-                      {machine.weekendStatus || (isGold ? 'Active Mon–Sun' : isSilver ? 'Paused Sunday' : 'Paused Sat & Sun')}
+                    <strong className="text-amber-300">
+                      {machine.weekendStatus || 'Offline on Saturday & Sunday'}
                     </strong>
                   </div>
                   <div className="flex justify-between text-slate-300">
@@ -176,7 +180,7 @@ export const MachineMarketplace: React.FC<MachineMarketplaceProps> = ({
                 </div>
 
                 <button
-                  id={`marketplace-rent-${machine.tier}`}
+                  id={`marketplace-rent-${machine.id}`}
                   onClick={() => onSelectMachine(machine)}
                   className={`w-full py-3.5 rounded-2xl font-orbitron font-bold text-xs uppercase tracking-wider transition shadow-lg ${
                     isGold
@@ -186,7 +190,7 @@ export const MachineMarketplace: React.FC<MachineMarketplaceProps> = ({
                       : 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-500 hover:to-cyan-400 shadow-[0_0_20px_rgba(0,180,255,0.3)]'
                   }`}
                 >
-                  Rent {machine.tier.toUpperCase()} CPU Machine →
+                  Rent {machine.name} →
                 </button>
               </div>
 
@@ -207,59 +211,77 @@ export const MachineMarketplace: React.FC<MachineMarketplaceProps> = ({
             <thead>
               <tr className="border-b border-cyan-900/50 text-slate-400">
                 <th className="py-3 px-4">Specification</th>
-                <th className="py-3 px-4 text-amber-400 font-orbitron">🥇 Gold CPU</th>
-                <th className="py-3 px-4 text-slate-200 font-orbitron">🥈 Silver CPU</th>
-                <th className="py-3 px-4 text-cyan-400 font-orbitron">⚙️ Normal CPU</th>
+                {machines.map(m => (
+                  <th key={m.id} className="py-3 px-4 font-orbitron whitespace-nowrap text-white">
+                    {m.name}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800">
               <tr>
                 <td className="py-3 px-4 text-slate-400">Rental Price</td>
-                <td className="py-3 px-4 font-bold text-amber-400 font-orbitron">UGX 150,000</td>
-                <td className="py-3 px-4 font-bold text-slate-200 font-orbitron">UGX 60,000</td>
-                <td className="py-3 px-4 font-bold text-cyan-400 font-orbitron">UGX 30,000</td>
+                {machines.map(m => (
+                  <td key={m.id} className="py-3 px-4 font-bold text-amber-400 font-orbitron whitespace-nowrap">
+                    UGX {(m.rentalPriceUGX ?? 0).toLocaleString()}
+                  </td>
+                ))}
+              </tr>
+              <tr>
+                <td className="py-3 px-4 text-slate-400">Daily Income</td>
+                {machines.map(m => (
+                  <td key={m.id} className="py-3 px-4 font-bold text-emerald-400 font-orbitron whitespace-nowrap">
+                    UGX {(m.dailyEstimatedYieldUGX ?? 0).toLocaleString()} / day
+                  </td>
+                ))}
               </tr>
               <tr>
                 <td className="py-3 px-4 text-slate-400">Total Income Return</td>
-                <td className="py-3 px-4 font-bold text-emerald-400 font-orbitron">UGX 250,000 (+167%)</td>
-                <td className="py-3 px-4 font-bold text-emerald-400 font-orbitron">UGX 100,000 (+167%)</td>
-                <td className="py-3 px-4 font-bold text-emerald-400 font-orbitron">UGX 48,000 (+160%)</td>
+                {machines.map(m => (
+                  <td key={m.id} className="py-3 px-4 font-bold text-cyan-300 font-orbitron whitespace-nowrap">
+                    UGX {(m.totalEstimatedYieldUGX ?? 0).toLocaleString()} (+{m.totalEstimatedYieldPercent ?? 0}%)
+                  </td>
+                ))}
               </tr>
               <tr>
-                <td className="py-3 px-4 text-slate-400">Working Days Schedule</td>
-                <td className="py-3 px-4 font-bold text-amber-300">Everyday (7 Days / Wk)</td>
-                <td className="py-3 px-4 font-bold text-cyan-300">6 Days / Wk (Mon – Sat)</td>
-                <td className="py-3 px-4 font-bold text-blue-300">5 Days / Wk (Mon – Fri)</td>
+                <td className="py-3 px-4 text-slate-400">Term Duration</td>
+                {machines.map(m => (
+                  <td key={m.id} className="py-3 px-4 text-white font-bold whitespace-nowrap">
+                    {m.durationDays} Days
+                  </td>
+                ))}
               </tr>
               <tr>
-                <td className="py-3 px-4 text-slate-400">Weekend Operations</td>
-                <td className="py-3 px-4 text-emerald-400">Active Saturday & Sunday</td>
-                <td className="py-3 px-4 text-amber-400">Active Sat • Paused Sun</td>
-                <td className="py-3 px-4 text-rose-400">Offline on Sat & Sun</td>
+                <td className="py-3 px-4 text-slate-400">Working Schedule</td>
+                {machines.map(m => (
+                  <td key={m.id} className="py-3 px-4 text-cyan-300 font-semibold whitespace-nowrap">
+                    {m.workingDaysSchedule || 'Monday – Friday (5 Days / Wk)'}
+                  </td>
+                ))}
+              </tr>
+              <tr>
+                <td className="py-3 px-4 text-slate-400">Weekend Status</td>
+                {machines.map(m => (
+                  <td key={m.id} className="py-3 px-4 text-amber-300 font-semibold whitespace-nowrap">
+                    {m.weekendStatus || 'Offline on Saturday & Sunday'}
+                  </td>
+                ))}
               </tr>
               <tr>
                 <td className="py-3 px-4 text-slate-400">Daily Update Time</td>
-                <td className="py-3 px-4 text-slate-200">Auto 12:00 PM Daily</td>
-                <td className="py-3 px-4 text-slate-200">Auto 12:00 PM Daily</td>
-                <td className="py-3 px-4 text-slate-200">Auto 12:00 PM Daily</td>
+                {machines.map(m => (
+                  <td key={m.id} className="py-3 px-4 text-slate-300 whitespace-nowrap">
+                    {m.updateTime || 'Auto 12:00 PM Daily'}
+                  </td>
+                ))}
               </tr>
               <tr>
-                <td className="py-3 px-4 text-slate-400">Hash Rate</td>
-                <td className="py-3 px-4 font-bold text-white">480 TH/s</td>
-                <td className="py-3 px-4 font-bold text-white">180 TH/s</td>
-                <td className="py-3 px-4 font-bold text-white">65 TH/s</td>
-              </tr>
-              <tr>
-                <td className="py-3 px-4 text-slate-400">Processing Cores</td>
-                <td className="py-3 px-4 text-slate-300">256-Core Liquid Cryo</td>
-                <td className="py-3 px-4 text-slate-300">128-Core Dual-Die Matrix</td>
-                <td className="py-3 px-4 text-slate-300">48-Core Steady State</td>
-              </tr>
-              <tr>
-                <td className="py-3 px-4 text-slate-400">Est. Daily Output</td>
-                <td className="py-3 px-4 text-emerald-400 font-bold">UGX 8,333/day</td>
-                <td className="py-3 px-4 text-emerald-400 font-bold">UGX 3,333/day</td>
-                <td className="py-3 px-4 text-emerald-400 font-bold">UGX 1,600/day</td>
+                <td className="py-3 px-4 text-slate-400">Computing Power</td>
+                {machines.map(m => (
+                  <td key={m.id} className="py-3 px-4 font-bold text-white whitespace-nowrap">
+                    {m.computingPower}
+                  </td>
+                ))}
               </tr>
             </tbody>
           </table>

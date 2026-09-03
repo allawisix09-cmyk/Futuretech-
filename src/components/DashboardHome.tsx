@@ -115,7 +115,7 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({
       )}
       
       {/* 1. Profile Welcome & Account Overview */}
-      <div className="p-6 rounded-3xl bg-gradient-to-r from-[#09152e] via-[#0b1b3b] to-[#081226] border border-cyan-500/40 glow-border-cyan flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl">
+      <div className="p-6 rounded-3xl bg-gradient-to-r from-[#09152e] via-[#0b1b3b] to-[#081224] border border-cyan-500/40 glow-border-cyan flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 via-cyan-500 to-indigo-500 flex items-center justify-center font-orbitron font-black text-xl shadow-[0_0_15px_rgba(0,210,255,0.4)]">
             {user.username.charAt(0).toUpperCase()}
@@ -153,6 +153,30 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({
             <ArrowUpRight className="w-4 h-4 text-cyan-400" />
             <span>Withdraw</span>
           </button>
+        </div>
+      </div>
+
+      {/* Official 20-Year Uganda Govt Contract & Branch Info Banner */}
+      <div className="p-4 rounded-2xl bg-gradient-to-r from-[#061426] via-[#0a1e38] to-[#061426] border border-emerald-500/40 shadow-[0_0_20px_rgba(16,185,129,0.12)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 font-mono text-xs">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-300 font-bold shrink-0">
+            🇺🇬
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <strong className="text-white font-orbitron text-xs">Future Tech China — Official Uganda Branch</strong>
+              <span className="px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-500/60 text-emerald-300 text-[9px] font-bold uppercase">
+                20-Year Govt Contract Active
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-300 mt-0.5">
+              Operating under a long-term 20-year official agreement with the Ugandan Government for cloud compute leasing, node rewards & instant MoMo payouts.
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 text-[10px] text-emerald-400 font-bold shrink-0 bg-[#040d18] px-3 py-1.5 rounded-xl border border-emerald-500/30">
+          <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+          <span>Verified State Concession</span>
         </div>
       </div>
 
@@ -445,12 +469,12 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({
                           ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/40'
                           : 'bg-amber-950/80 text-amber-300 border border-amber-500/40'
                       }`}>
-                        {rental.isWorkingToday !== false ? '● Active Today (12 PM Update)' : '⏸ Weekend / Off Schedule'}
+                        {rental.isWorkingToday !== false ? '● Active Today (12 PM Update)' : '⏸ Weekend Pause (Sat & Sun Off)'}
                       </span>
                     </div>
 
                     <span className="text-[10px] font-mono text-cyan-400 block mt-0.5">
-                      {rental.workingDaysSchedule || (rental.machineTier === 'gold' ? 'Everyday' : rental.machineTier === 'silver' ? '6 Days/Wk' : 'Mon–Fri')} • UGX {(rental.dailyEstimatedYieldUGX ?? 0).toLocaleString()}/Day
+                      {rental.workingDaysSchedule || 'Monday – Friday (5 Days / Wk)'} • UGX {(rental.dailyEstimatedYieldUGX ?? 0).toLocaleString()}/Day
                     </span>
                     <div className="text-[10px] text-slate-400 font-mono mt-1">
                       Accrued: <strong className="text-emerald-400">UGX {(rental.accumulatedEarningsUGX ?? 0).toLocaleString()}</strong>
@@ -464,7 +488,7 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({
                       ? 'bg-emerald-950/80 border border-emerald-500/40 text-emerald-300'
                       : 'bg-amber-950/80 border border-amber-500/40 text-amber-300'
                   }`}>
-                    {rental.isWorkingToday !== false ? 'ONLINE' : 'WEEKEND OFF'}
+                    {rental.isWorkingToday !== false ? 'ONLINE' : 'WEEKEND (OFF)'}
                   </span>
                   <p className="text-[9px] font-mono text-slate-500 mt-2">
                     Auto 12 PM
@@ -494,7 +518,7 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {machines.map(m => (
             <div
               key={m.id}

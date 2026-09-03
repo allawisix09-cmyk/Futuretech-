@@ -74,8 +74,9 @@ export const WalletView: React.FC<WalletViewProps> = ({
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
-  const withdrawalFee = Math.round(withAmount * 0.015); // 1.5% fee
-  const netWithdrawal = withAmount - withdrawalFee;
+  const withdrawalFeePercent = 15;
+  const withdrawalFee = Math.round(withAmount * (withdrawalFeePercent / 100)); // 15% platform deduction
+  const netWithdrawal = Math.max(0, withAmount - withdrawalFee);
 
   // Load user deposits
   const loadDeposits = async () => {
@@ -997,7 +998,10 @@ export const WalletView: React.FC<WalletViewProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-mono text-slate-300 mb-1">Withdrawal Amount (UGX)</label>
+                <div className="flex justify-between items-center text-xs font-mono text-slate-300 mb-1">
+                  <span>Withdrawal Amount (UGX)</span>
+                  <span className="text-[10px] text-cyan-400">Min: UGX 20,000</span>
+                </div>
                 <input
                   type="number"
                   step="5000"
@@ -1006,18 +1010,59 @@ export const WalletView: React.FC<WalletViewProps> = ({
                   required
                   value={withAmount}
                   onChange={e => setWithAmount(Number(e.target.value))}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#040813] border border-slate-700 focus:border-cyan-400 text-white text-sm font-mono focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#040813] border border-slate-700 focus:border-cyan-400 text-white text-base font-orbitron font-bold focus:outline-none"
                 />
+
+                {/* Quick amount presets */}
+                <div className="grid grid-cols-4 gap-1.5 mt-2">
+                  {[20000, 50000, 100000].map(preset => (
+                    <button
+                      key={preset}
+                      type="button"
+                      onClick={() => setWithAmount(preset)}
+                      className={`py-1 rounded-lg text-[10px] font-mono border transition ${
+                        withAmount === preset
+                          ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300 font-bold'
+                          : 'bg-[#040813] border-slate-800 text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      {preset >= 1000 ? `${preset / 1000}k` : preset}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setWithAmount(user.walletBalanceUGX || 0)}
+                    className={`py-1 rounded-lg text-[10px] font-mono border transition ${
+                      withAmount === user.walletBalanceUGX
+                        ? 'bg-amber-500/20 border-amber-400 text-amber-300 font-bold'
+                        : 'bg-[#040813] border-slate-800 text-amber-400/80 hover:text-amber-300'
+                    }`}
+                  >
+                    Max
+                  </button>
+                </div>
               </div>
 
-              <div className="space-y-1 text-xs font-mono text-slate-400 py-1">
-                <div className="flex justify-between">
-                  <span>Telecom Settlement Fee (1.5%):</span>
-                  <span className="text-slate-300">UGX {(withdrawalFee ?? 0).toLocaleString()}</span>
+              {/* Dynamic 15% Deduction & Amount to be Received Summary Card */}
+              <div className="p-3.5 rounded-2xl bg-gradient-to-b from-[#061226] to-[#040916] border border-cyan-500/40 space-y-2 shadow-inner">
+                <div className="flex justify-between items-center text-xs font-mono text-slate-300">
+                  <span>Requested Withdrawal:</span>
+                  <span className="text-white font-bold font-orbitron">UGX {(withAmount ?? 0).toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between font-bold text-white">
-                  <span>Net Amount to Receive:</span>
-                  <span className="text-emerald-400 font-orbitron">UGX {(netWithdrawal ?? 0).toLocaleString()}</span>
+                <div className="flex justify-between items-center text-xs font-mono text-rose-400">
+                  <span className="flex items-center gap-1">
+                    <span>15% Platform Deduction:</span>
+                  </span>
+                  <span className="font-bold font-mono">- UGX {(withdrawalFee ?? 0).toLocaleString()}</span>
+                </div>
+                <div className="pt-2 border-t border-slate-800/80 flex justify-between items-center">
+                  <div>
+                    <span className="text-xs font-mono font-bold text-emerald-300 block">Amount to be Received:</span>
+                    <span className="text-[10px] font-mono text-slate-400">Direct to registered Mobile Money</span>
+                  </div>
+                  <span className="text-base font-orbitron font-black text-emerald-400">
+                    UGX {(netWithdrawal ?? 0).toLocaleString()}
+                  </span>
                 </div>
               </div>
 
@@ -1028,16 +1073,19 @@ export const WalletView: React.FC<WalletViewProps> = ({
                   required
                   value={withPhone}
                   onChange={e => setWithPhone(e.target.value)}
+                  placeholder="+256770000000"
                   className="w-full px-3.5 py-2.5 rounded-xl bg-[#040813] border border-slate-700 focus:border-cyan-400 text-white text-xs font-mono focus:outline-none"
                 />
               </div>
 
               <button
                 type="submit"
-                disabled={withLoading || withAmount > user.walletBalanceUGX}
+                disabled={withLoading || withAmount > user.walletBalanceUGX || withAmount < 20000}
                 className="w-full py-3.5 rounded-xl font-orbitron font-bold text-xs uppercase tracking-wider text-white glow-btn-primary disabled:opacity-50"
               >
-                {withLoading ? 'Processing Settlement...' : `Confirm Withdraw UGX ${(withAmount ?? 0).toLocaleString()}`}
+                {withLoading
+                  ? 'Processing Settlement...'
+                  : `Confirm Withdraw (Receive UGX ${(netWithdrawal ?? 0).toLocaleString()})`}
               </button>
             </form>
           </div>
